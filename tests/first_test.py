@@ -60,8 +60,7 @@ def test_change_view_projects_list_by_table_view(page: Page, login):
 def test_choose_project_by_classic_mode(page: Page, login):
     click_create_project(page)
 
-    expect(page.locator('#classical')).to_have_css('border-color', 'rgb(79, 70, 229)')
-    expect(page.locator("#classical-img")).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
+    verify_project_mode(page, 'classical')
 
 
 def test_choose_project_by_bdd_mode(page: Page, login):
@@ -69,8 +68,7 @@ def test_choose_project_by_bdd_mode(page: Page, login):
 
     page.locator('#bdd').click()
 
-    expect(page.locator('#bdd')).to_have_css('border-color', 'rgb(79, 70, 229)')
-    expect(page.locator("#bdd-img")).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
+    verify_project_mode(page, 'bdd')
 
 
 def test_can_create_project_by_header_button(page: Page, login):
@@ -79,6 +77,11 @@ def test_can_create_project_by_header_button(page: Page, login):
     expect(page.locator(".common-page-header")).to_contain_text("New Project")
     expect(page.locator("#project_title")).to_be_visible()
     expect(page.get_by_role("button", name="Create", exact=True)).to_be_visible()
+
+
+def verify_project_mode(page: Page, mode: str):
+    expect(page.locator(f"#{mode}")).to_have_css('border-color', 'rgb(79, 70, 229)')
+    expect(page.locator(f"#{mode}-img")).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
 
 
 def click_create_project(page: Page):
