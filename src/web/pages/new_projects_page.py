@@ -10,6 +10,12 @@ class NewProjectsPage:
         self.page = page
         self.__form_container = page.locator("#content-desktop [action='/projects']")
 
+    def _mode_button(self, mode: str):
+        return self.__form_container.locator(f"#{mode}")
+
+    def _mode_icon(self, mode: str):
+        return self.__form_container.locator(f"#{mode}-img")
+
     def open(self) -> Self:
         self.page.goto("/projects/new")
         return self
@@ -35,3 +41,12 @@ class NewProjectsPage:
         self.__form_container.locator("#project-create-btn input").click()
         expect(self.__form_container.locator("#project-create-btn input")).to_be_hidden(timeout=10_000)
         return ProjectPage(self.page)
+
+    def select_mode(self, mode: str) -> Self:
+        self._mode_button(mode).click()
+        return self
+
+    def expect_mode_selected(self, mode: str) -> Self:
+        expect(self._mode_button(mode)).to_have_css('border-color', 'rgb(79, 70, 229)')
+        expect(self._mode_icon(mode)).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
+        return self

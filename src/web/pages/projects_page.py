@@ -15,6 +15,9 @@ class ProjectsPage:
 
         self.projects_grid = page.locator('#grid')
         self._project_cards = page.locator('#grid ul li a[href*="/projects/"]')
+        self.table = page.locator('#table')
+        self.empty_projects_message = page.get_by_text("You have not created any projects yet")
+        self.new_project_link = page.locator('.auth-header-nav [href="/projects/new"]')
 
         self.total_count = page.locator('.common-counter')
 
@@ -52,6 +55,22 @@ class ProjectsPage:
 
     def get_demo_projects(self) -> List[ProjectCard]:
         return [project for project in self.get_projects() if project.is_demo_project()]
+
+    def expect_project_heading_hidden(self, title: str):
+        expect(self.page.get_by_role("heading", name=title)).to_be_hidden()
+
+    def expect_no_projects_message(self):
+        expect(self.empty_projects_message).to_be_visible()
+
+    def expect_info_message(self, expected_text: str):
+        expect(self.info_message).to_have_text(expected_text)
+
+    def expect_table_view_active(self):
+        expect(self.table).to_be_visible()
+        expect(self.header.table_view_button).to_contain_class("active_list_type")
+
+    def open_new_project_from_header(self):
+        self.new_project_link.click()
 
     def is_loaded(self):
         expect(self.page.locator(".common-flash-success")).to_be_visible()
