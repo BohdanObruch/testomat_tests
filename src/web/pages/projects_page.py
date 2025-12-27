@@ -35,6 +35,11 @@ class ProjectsPage:
         card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
         return ProjectCard(card)
 
+    def click_project_by_title(self, title: str):
+        card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
+        card.click()
+        return self
+
     def count_of_project_visible(self, expected_count: int):
         return expect(self._project_cards.filter(visible=True)).to_have_count(expected_count)
 
