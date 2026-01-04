@@ -2,7 +2,7 @@ from faker import Faker
 
 from src.web.application import Application
 
-TARGET_PROJECT = "python manufacture"
+TARGET_PROJECT = "Books"
 
 
 def test_create_test_suite(login, app: Application):

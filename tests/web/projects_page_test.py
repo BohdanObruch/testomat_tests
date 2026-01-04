@@ -1,7 +1,7 @@
 from src.web.application import Application
 from src.web.components.project_card import Badges
 
-TARGET_PROJECT = "python manufacture"
+TARGET_PROJECT = "Books"
 
 
 def test_search_project_in_company(login, app: Application):
@@ -15,7 +15,7 @@ def test_search_project_in_company(login, app: Application):
     app.projects_page.header.search_project(TARGET_PROJECT)
     app.projects_page.count_of_project_visible(1)
     target_project = app.projects_page.get_project_by_title(TARGET_PROJECT)
-    target_project.badges_has(Badges.Demo)
+    target_project.badges_has(Badges.Classical)
 
 
 def test_should_be_possible_to_open_free_project(login, app: Application):
