@@ -4,7 +4,7 @@ from playwright.sync_api import Page, expect
 
 from tests.conftest import Config
 
-TARGET_PROJECT = 'python manufacture'
+TARGET_PROJECT = 'Books'
 
 
 @pytest.fixture(scope="function")

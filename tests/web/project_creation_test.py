@@ -13,7 +13,7 @@ def test_new_project_creation(login, app: Application):
      .click_create())
 
     (app.project_page
-     .is_loaded()
+     .is_loaded_empty_project()
      .empty_project_name_is(target_project_name)
      .close_read_me())
 

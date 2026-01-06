@@ -23,7 +23,6 @@ class ProjectsPage:
 
     def navigate(self, url: str = '/projects'):
         self.page.goto(url)
-        self.page.wait_for_load_state('networkidle')
 
     def get_success_message(self) -> str:
         return self.success_message.text_content().strip()
@@ -34,6 +33,11 @@ class ProjectsPage:
     def get_project_by_title(self, title: str) -> ProjectCard:
         card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
         return ProjectCard(card)
+
+    def click_project_by_title(self, title: str):
+        card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
+        card.click()
+        return self
 
     def count_of_project_visible(self, expected_count: int):
         return expect(self._project_cards.filter(visible=True)).to_have_count(expected_count)
