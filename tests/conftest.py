@@ -14,11 +14,6 @@ load_dotenv()
 def clear_browser_state(page: Page) -> None:
     """Clear cookies and local storage for the current page context."""
     page.context.clear_cookies()
-    clear_page_storage(page)
-
-
-def clear_page_storage(page: Page) -> None:
-    """Clear local/session storage without touching cookies."""
     page.evaluate("window.localStorage.clear()")
     page.evaluate("window.sessionStorage.clear()")
 
@@ -43,7 +38,7 @@ def configs() -> Config:
 
 # Shared browser instance for session
 @pytest.fixture(scope="session")
-def browser_instance() -> Generator[Browser]:
+def browser_instance() -> Generator[Browser, None, None]:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False, slow_mo=0, timeout=30000)
         yield browser
@@ -52,14 +47,14 @@ def browser_instance() -> Generator[Browser]:
 
 # 1. Clean app - fresh page per test (function scope)
 @pytest.fixture(scope="function")
-def context(browser_instance: Browser, configs: Config) -> Generator[BrowserContext]:
+def context(browser_instance: Browser, configs: Config) -> Generator[BrowserContext, None, None]:
     context = build_browser_instance(browser_instance, configs)
     yield context
     context.close()
 
 
 @pytest.fixture(scope="function")
-def page(context: BrowserContext) -> Generator[Page]:
+def page(context: BrowserContext) -> Generator[Page, None, None]:
     page = context.new_page()
     yield page
     page.close()
@@ -72,7 +67,7 @@ def app(page: Page) -> Application:
 
 # 2. Logged app - reuses authenticated session (session scope)
 @pytest.fixture(scope="session")
-def logged_context(browser_instance: Browser, configs: Config) -> Generator[BrowserContext]:
+def logged_context(browser_instance: Browser, configs: Config) -> Generator[BrowserContext, None, None]:
     context = build_browser_instance(browser_instance, configs)
 
     page = context.new_page()
@@ -86,7 +81,7 @@ def logged_context(browser_instance: Browser, configs: Config) -> Generator[Brow
 
 
 @pytest.fixture(scope="function")
-def logged_app(logged_context: BrowserContext) -> Generator[Application]:
+def logged_app(logged_context: BrowserContext) -> Generator[Application, None, None]:
     page = logged_context.new_page()
     yield Application(page)
     page.close()
@@ -94,7 +89,7 @@ def logged_app(logged_context: BrowserContext) -> Generator[Application]:
 
 # 3. Shared page for parametrized tests (module scope) - reuses the same page across test params
 @pytest.fixture(scope="module")
-def shared_browser(browser_instance: Browser, configs: Config) -> Generator[Page]:
+def shared_browser(browser_instance: Browser, configs: Config) -> Generator[Page, None, None]:
     context = build_browser_instance(browser_instance, configs)
 
     page = context.new_page()
@@ -116,6 +111,6 @@ def build_browser_instance(browser_instance: Browser, configs: Config) -> Browse
 
 
 @pytest.fixture(scope="function")
-def shared_page(shared_browser: Page) -> Generator[Application]:
+def shared_page(shared_browser: Page) -> Generator[Application, None, None]:
     yield Application(shared_browser)
     clear_browser_state(shared_browser)
