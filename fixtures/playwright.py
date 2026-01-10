@@ -32,8 +32,12 @@ def _test_failed(request: pytest.FixtureRequest) -> bool:
     return bool(rep_call and rep_call.failed)
 
 
+def _normalized_option(value: Optional[str]) -> str:
+    return (value or "off").lower()
+
+
 def _should_take_screenshot(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = (settings.screenshot or "off").lower()
+    option = _normalized_option(settings.screenshot)
     if option == "on":
         return True
     if option == "only-on-failure":
@@ -77,7 +81,7 @@ def _finalize_page(page: Page, request: pytest.FixtureRequest, settings: Playwri
 
 
 def _video_should_keep(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = (settings.video or "off").lower()
+    option = _normalized_option(settings.video)
     if option == "on":
         return True
     if option == "retain-on-failure":
@@ -140,7 +144,7 @@ def _cleanup_video(
 
 
 def _should_trace(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = (settings.tracing or "off").lower()
+    option = _normalized_option(settings.tracing)
     if option == "on":
         return True
     if option == "retain-on-failure":
@@ -149,7 +153,7 @@ def _should_trace(settings: PlaywrightSettings, request: pytest.FixtureRequest) 
 
 
 def _start_tracing(context: BrowserContext, settings: PlaywrightSettings) -> None:
-    option = (settings.tracing or "off").lower()
+    option = _normalized_option(settings.tracing)
     if option not in {"on", "retain-on-failure"}:
         return
     context.tracing.start(screenshots=True, snapshots=True, sources=True)
@@ -160,7 +164,7 @@ def _stop_tracing(
         request: pytest.FixtureRequest,
         settings: PlaywrightSettings,
 ) -> None:
-    option = (settings.tracing or "off").lower()
+    option = _normalized_option(settings.tracing)
     if option not in {"on", "retain-on-failure"}:
         return
     if not _should_trace(settings, request):
@@ -190,7 +194,7 @@ def build_browser_context(
     }
     if storage_state is not None:
         context_kwargs["storage_state"] = str(storage_state)
-    if enable_video and (settings.video or "").lower() in {"on", "retain-on-failure"}:
+    if enable_video and _normalized_option(settings.video) in {"on", "retain-on-failure"}:
         settings.video_dir.mkdir(parents=True, exist_ok=True)
         context_kwargs["record_video_dir"] = str(settings.video_dir)
     return browser_instance.new_context(**context_kwargs)
