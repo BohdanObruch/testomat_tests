@@ -36,13 +36,28 @@ def _normalized_option(value: Optional[str]) -> str:
     return (value or "off").lower()
 
 
-def _should_take_screenshot(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = _normalized_option(settings.screenshot)
-    if option == "on":
+def _option_enabled(
+        option: Optional[str],
+        *,
+        on_value: str,
+        on_failure_value: str,
+        request: pytest.FixtureRequest,
+) -> bool:
+    normalized = _normalized_option(option)
+    if normalized == on_value:
         return True
-    if option == "only-on-failure":
+    if normalized == on_failure_value:
         return _test_failed(request)
     return False
+
+
+def _should_take_screenshot(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
+    return _option_enabled(
+        settings.screenshot,
+        on_value="on",
+        on_failure_value="only-on-failure",
+        request=request,
+    )
 
 
 def _artifact_basename(request: pytest.FixtureRequest, browser_name: str) -> str:
@@ -81,24 +96,30 @@ def _finalize_page(page: Page, request: pytest.FixtureRequest, settings: Playwri
 
 
 def _video_should_keep(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = _normalized_option(settings.video)
-    if option == "on":
-        return True
-    if option == "retain-on-failure":
-        return _test_failed(request)
+    return _option_enabled(
+        settings.video,
+        on_value="on",
+        on_failure_value="retain-on-failure",
+        request=request,
+    )
+
+
+def _retry_on_permission(action, *, retries: int = 3, delay: float = 0.2) -> bool:
+    for _ in range(retries):
+        try:
+            action()
+            return True
+        except PermissionError:
+            time.sleep(delay)
+        except FileNotFoundError:
+            return False
+        except Exception:
+            return False
     return False
 
 
 def _save_video(video, target: Path) -> bool:
-    for _ in range(3):
-        try:
-            video.save_as(path=str(target))
-            return True
-        except PermissionError:
-            time.sleep(0.2)
-        except Exception:
-            return False
-    return False
+    return _retry_on_permission(lambda: video.save_as(path=str(target)))
 
 
 def _cleanup_video(
@@ -114,14 +135,7 @@ def _cleanup_video(
     except Exception:
         return
     if not _video_should_keep(settings, request):
-        for _ in range(3):
-            try:
-                os.remove(path)
-                return
-            except FileNotFoundError:
-                return
-            except PermissionError:
-                time.sleep(0.2)
+        _retry_on_permission(lambda: os.remove(path))
         return
     settings.video_dir.mkdir(parents=True, exist_ok=True)
     target = settings.video_dir / f"{_artifact_basename(request, browser_name)}.webm"
@@ -133,23 +147,16 @@ def _cleanup_video(
         except Exception:
             pass
         return
-    for _ in range(3):
-        try:
-            os.replace(path, target)
-            return
-        except FileNotFoundError:
-            return
-        except PermissionError:
-            time.sleep(0.2)
+    _retry_on_permission(lambda: os.replace(path, target))
 
 
 def _should_trace(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
-    option = _normalized_option(settings.tracing)
-    if option == "on":
-        return True
-    if option == "retain-on-failure":
-        return _test_failed(request)
-    return False
+    return _option_enabled(
+        settings.tracing,
+        on_value="on",
+        on_failure_value="retain-on-failure",
+        request=request,
+    )
 
 
 def _start_tracing(context: BrowserContext, settings: PlaywrightSettings) -> None:

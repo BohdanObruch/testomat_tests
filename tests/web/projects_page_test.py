@@ -40,7 +40,9 @@ def test_can_not_create_project_without_company(logged_app: Application):
     logged_app.projects_page.header.select_company("Free Projects")
     logged_app.projects_page.header.click_create()
 
-    logged_app.projects_page.expect_info_message("Please switch to a company you own to create a project")
+    logged_app.projects_page.expect_info_message(
+        "Please switch to a company you own to create a project",
+    )
 
 
 @pytest.mark.smoke
