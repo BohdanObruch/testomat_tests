@@ -312,23 +312,22 @@ def shared_browser(
         browser_instance: Browser,
         configs: Config,
         playwright_settings: PlaywrightSettings,
-) -> Generator[BrowserContext, None, None]:
-    context = build_browser_context(browser_instance, configs, playwright_settings)
-    yield context
+) -> Generator[Page]:
+    context = build_browser_context(browser_instance, configs, playwright_settings, enable_video=False)
+    page = context.new_page()
+    yield page
+    page.close()
     context.close()
 
 
 @pytest.fixture(scope="function")
 def shared_page(
-        shared_browser: BrowserContext,
+        shared_browser: Page,
         request: pytest.FixtureRequest,
         playwright_settings: PlaywrightSettings,
-) -> Generator[Application, None, None]:
-    page = shared_browser.new_page()
-    _start_tracing(shared_browser, playwright_settings)
+) -> Generator[Application]:
     try:
-        yield Application(page)
+        yield Application(shared_browser)
     finally:
-        _stop_tracing(shared_browser, request, playwright_settings)
-        clear_browser_state(page)
-        _finalize_page(page, request, playwright_settings)
+        _capture_screenshot(shared_browser, request, playwright_settings)
+        clear_browser_state(shared_browser)
