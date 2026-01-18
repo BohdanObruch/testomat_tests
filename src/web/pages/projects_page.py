@@ -57,9 +57,6 @@ class ProjectsPage:
     def verify_success_message(self, expected_text: str):
         expect(self.success_message).to_have_text(expected_text)
 
-    def get_demo_projects(self) -> List[ProjectCard]:
-        return [project for project in self.get_projects() if project.is_demo_project()]
-
     def expect_project_heading_hidden(self, title: str):
         expect(self.page.get_by_role("heading", name=title)).to_be_hidden()
 

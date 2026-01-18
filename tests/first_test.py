@@ -2,14 +2,14 @@ import pytest
 from faker import Faker
 from playwright.sync_api import Page, expect
 
-from tests.conftest import Config
+from fixtures.config import Config
 
 TARGET_PROJECT = 'Books'
 
 
 @pytest.fixture(scope="function")
 def login(page: Page, configs: Config):
-    page.goto(configs.login_url)
+    page.goto(configs.app_base_url)
     login_user(page, configs.email, configs.password)
 
 
