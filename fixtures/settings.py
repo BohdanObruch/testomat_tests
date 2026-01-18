@@ -1,22 +1,21 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import pytest
 
 
 @dataclass(frozen=True)
 class PlaywrightSettings:
-    screenshot: Optional[str]
-    video: Optional[str]
-    tracing: Optional[str]
+    screenshot: str | None
+    video: str | None
+    tracing: str | None
     output_dir: Path
     screenshot_dir: Path
     video_dir: Path
     trace_dir: Path
 
 
-def _get_option(config: pytest.Config, name: str) -> Optional[str]:
+def _get_option(config: pytest.Config, name: str) -> str | None:
     try:
         return config.getoption(name)
     except Exception:

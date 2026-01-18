@@ -1,6 +1,4 @@
-from typing import List
-
-from playwright.sync_api import expect, Page
+from playwright.sync_api import Page, expect
 
 from src.web.components import ProjectCard, ProjectsHeader
 
@@ -10,32 +8,32 @@ class ProjectsPage:
         self.page = page
         self.header = ProjectsHeader(page)
 
-        self.success_message = page.locator('.common-flash-success-right p')
-        self.info_message = page.locator('.common-flash-info-right p')
+        self.success_message = page.locator(".common-flash-success-right p")
+        self.info_message = page.locator(".common-flash-info-right p")
 
-        self.projects_grid = page.locator('#grid')
+        self.projects_grid = page.locator("#grid")
         self._project_cards = page.locator('#grid ul li a[href*="/projects/"]')
-        self.table = page.locator('#table')
+        self.table = page.locator("#table")
         self.empty_projects_message = page.get_by_text("You have not created any projects yet")
         self.new_project_link = page.locator('.auth-header-nav [href="/projects/new"]')
 
-        self.total_count = page.locator('.common-counter')
+        self.total_count = page.locator(".common-counter")
 
-    def navigate(self, url: str = '/projects'):
+    def navigate(self, url: str = "/projects"):
         self.page.goto(url)
 
     def get_success_message(self) -> str:
         return self.success_message.text_content().strip()
 
-    def get_projects(self) -> List[ProjectCard]:
+    def get_projects(self) -> list[ProjectCard]:
         return [ProjectCard(card) for card in self._project_cards.all()]
 
     def get_project_by_title(self, title: str) -> ProjectCard:
-        card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
+        card = self._project_cards.filter(has=self.page.locator("h3", has_text=title)).first
         return ProjectCard(card)
 
     def click_project_by_title(self, title: str):
-        card = self._project_cards.filter(has=self.page.locator('h3', has_text=title)).first
+        card = self._project_cards.filter(has=self.page.locator("h3", has_text=title)).first
         card.click()
         return self
 
@@ -45,7 +43,7 @@ class ProjectsPage:
     def get_total_projects(self) -> int:
         return int(self.total_count.text_content())
 
-    def search_and_get_results(self, query: str) -> List[ProjectCard]:
+    def search_and_get_results(self, query: str) -> list[ProjectCard]:
         self.header.search_project(query)
         self.page.wait_for_timeout(300)
         return self.get_projects()

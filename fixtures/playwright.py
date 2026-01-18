@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import contextlib
 import os
 import time
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import pytest
 from playwright.sync_api import Browser, BrowserContext, Page, ViewportSize, sync_playwright
@@ -32,16 +34,16 @@ def _test_failed(request: pytest.FixtureRequest) -> bool:
     return bool(rep_call and rep_call.failed)
 
 
-def _normalized_option(value: Optional[str]) -> str:
+def _normalized_option(value: str | None) -> str:
     return (value or "off").lower()
 
 
 def _option_enabled(
-        option: Optional[str],
-        *,
-        on_value: str,
-        on_failure_value: str,
-        request: pytest.FixtureRequest,
+    option: str | None,
+    *,
+    on_value: str,
+    on_failure_value: str,
+    request: pytest.FixtureRequest,
 ) -> bool:
     normalized = _normalized_option(option)
     if normalized == on_value:
@@ -82,10 +84,8 @@ def _capture_screenshot(page: Page, request: pytest.FixtureRequest, settings: Pl
     settings.screenshot_dir.mkdir(parents=True, exist_ok=True)
     browser_name = _browser_name_from_context(page.context)
     path = settings.screenshot_dir / f"{_artifact_basename(request, browser_name)}.png"
-    try:
+    with contextlib.suppress(Exception):
         page.screenshot(path=str(path), full_page=True)
-    except Exception:
-        pass
 
 
 def _finalize_page(page: Page, request: pytest.FixtureRequest, settings: PlaywrightSettings) -> None:
@@ -123,10 +123,10 @@ def _save_video(video, target: Path) -> bool:
 
 
 def _cleanup_video(
-        video,
-        request: pytest.FixtureRequest,
-        settings: PlaywrightSettings,
-        browser_name: str,
+    video,
+    request: pytest.FixtureRequest,
+    settings: PlaywrightSettings,
+    browser_name: str,
 ) -> None:
     if not video:
         return
@@ -142,10 +142,8 @@ def _cleanup_video(
     if target == path:
         return
     if _save_video(video, target):
-        try:
+        with contextlib.suppress(Exception):
             os.remove(path)
-        except Exception:
-            pass
         return
     _retry_on_permission(lambda: os.replace(path, target))
 
@@ -167,9 +165,9 @@ def _start_tracing(context: BrowserContext, settings: PlaywrightSettings) -> Non
 
 
 def _stop_tracing(
-        context: BrowserContext,
-        request: pytest.FixtureRequest,
-        settings: PlaywrightSettings,
+    context: BrowserContext,
+    request: pytest.FixtureRequest,
+    settings: PlaywrightSettings,
 ) -> None:
     option = _normalized_option(settings.tracing)
     if option not in {"on", "retain-on-failure"}:
@@ -184,12 +182,12 @@ def _stop_tracing(
 
 
 def build_browser_context(
-        browser_instance: Browser,
-        configs: Config,
-        settings: PlaywrightSettings,
-        *,
-        enable_video: bool = True,
-        storage_state: Optional[Path] = None,
+    browser_instance: Browser,
+    configs: Config,
+    settings: PlaywrightSettings,
+    *,
+    enable_video: bool = True,
+    storage_state: Path | None = None,
 ) -> BrowserContext:
     viewport: ViewportSize = {"width": 1920, "height": 1080}
     context_kwargs = {
@@ -208,18 +206,18 @@ def build_browser_context(
 
 
 @pytest.fixture(scope="session")
-def browser_instance() -> Generator[Browser, None, None]:
+def browser_instance() -> Generator[Browser]:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, slow_mo=0, timeout=30000)
+        browser = p.chromium.launch(headless=True, slow_mo=0, timeout=30000)
         yield browser
         browser.close()
 
 
 @pytest.fixture(scope="session")
 def auth_state(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
 ) -> Path:
     auth_path = playwright_settings.output_dir / "auth_state.json"
     auth_path.parent.mkdir(parents=True, exist_ok=True)
@@ -238,11 +236,11 @@ def auth_state(
 # 1. Clean app - fresh page per test (function scope)
 @pytest.fixture(scope="function")
 def context(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
-        request: pytest.FixtureRequest,
-) -> Generator[BrowserContext, None, None]:
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
     context = build_browser_context(browser_instance, configs, playwright_settings)
     _start_tracing(context, playwright_settings)
     try:
@@ -254,10 +252,10 @@ def context(
 
 @pytest.fixture(scope="function")
 def page(
-        context: BrowserContext,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
-) -> Generator[Page, None, None]:
+    context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Page]:
     page = context.new_page()
     try:
         yield page
@@ -273,12 +271,12 @@ def app(page: Page) -> Application:
 # 2. Logged app - isolated context per test with shared auth state
 @pytest.fixture(scope="function")
 def logged_context(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
-        auth_state: Path,
-        request: pytest.FixtureRequest,
-) -> Generator[BrowserContext, None, None]:
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    auth_state: Path,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
     context = build_browser_context(
         browser_instance,
         configs,
@@ -295,10 +293,10 @@ def logged_context(
 
 @pytest.fixture(scope="function")
 def logged_app(
-        logged_context: BrowserContext,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
-) -> Generator[Application, None, None]:
+    logged_context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Application]:
     page = logged_context.new_page()
     try:
         yield Application(page)
@@ -309,9 +307,9 @@ def logged_app(
 # 3. Shared context for parametrized tests (module scope)
 @pytest.fixture(scope="module")
 def shared_browser(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
 ) -> Generator[Page]:
     context = build_browser_context(browser_instance, configs, playwright_settings, enable_video=False)
     page = context.new_page()
@@ -322,9 +320,9 @@ def shared_browser(
 
 @pytest.fixture(scope="function")
 def shared_page(
-        shared_browser: Page,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
+    shared_browser: Page,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
 ) -> Generator[Application]:
     try:
         yield Application(shared_browser)

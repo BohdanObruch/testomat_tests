@@ -9,16 +9,16 @@ class NavigationTabs:
     def __init__(self, page: Page):
         self.page = page
 
-        self._tabs_nav = page.get_by_role('navigation', name='Tabs')
-        self._select_all_button = self._tabs_nav.locator('button [class*=checkbox-multiple-marked]')
+        self._tabs_nav = page.get_by_role("navigation", name="Tabs")
+        self._select_all_button = self._tabs_nav.locator("button [class*=checkbox-multiple-marked]")
 
-        self._manual_tab = self._tabs_nav.get_by_role('link', name='Manual')
-        self._automated_tab = self._tabs_nav.get_by_role('link', name='Automated')
-        self._out_of_sync_tab = self._tabs_nav.get_by_role('link', name='Out of sync')
-        self._detached_tab = self._tabs_nav.get_by_role('link', name='Detached')
-        self._starred_tab = self._tabs_nav.get_by_role('link', name='Starred')
+        self._manual_tab = self._tabs_nav.get_by_role("link", name="Manual")
+        self._automated_tab = self._tabs_nav.get_by_role("link", name="Automated")
+        self._out_of_sync_tab = self._tabs_nav.get_by_role("link", name="Out of sync")
+        self._detached_tab = self._tabs_nav.get_by_role("link", name="Detached")
+        self._starred_tab = self._tabs_nav.get_by_role("link", name="Starred")
 
-        self._display_button = page.get_by_role('button', name='Display')
+        self._display_button = page.get_by_role("button", name="Display")
 
     def is_loaded(self) -> NavigationTabs:
         expect(self._tabs_nav).to_be_visible()
@@ -55,10 +55,10 @@ class NavigationTabs:
         return self
 
     def link_by_name(self, name: str):
-        return self._tabs_nav.get_by_role('link', name=name)
+        return self._tabs_nav.get_by_role("link", name=name)
 
     def counter_by_name(self, name: str):
-        return self.link_by_name(name).locator('.new-counter')
+        return self.link_by_name(name).locator(".new-counter")
 
     def expect_tab_active(self, name: str) -> NavigationTabs:
         link = self.link_by_name(name)

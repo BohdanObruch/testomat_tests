@@ -1,6 +1,6 @@
 from typing import Self
 
-from playwright.sync_api import expect, Page
+from playwright.sync_api import Page, expect
 
 from .project_page import ProjectPage
 
@@ -47,6 +47,6 @@ class NewProjectsPage:
         return self
 
     def expect_mode_selected(self, mode: str) -> Self:
-        expect(self._mode_button(mode)).to_have_css('border-color', 'rgb(79, 70, 229)')
+        expect(self._mode_button(mode)).to_have_css("border-color", "rgb(79, 70, 229)")
         expect(self._mode_icon(mode)).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
         return self

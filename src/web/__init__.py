@@ -1,13 +1,27 @@
 from .components import (
-    ProjectCard,
-    Badges,
-    ProjectsHeader,
-    SideBar,
+    Badges as Badges,
+)
+from .components import (
+    ProjectCard as ProjectCard,
+)
+from .components import (
+    ProjectsHeader as ProjectsHeader,
+)
+from .components import (
+    SideBar as SideBar,
 )
 from .pages import (
-    HomePage,
-    LoginPage,
-    ProjectPage,
-    ProjectsPage,
-    NewProjectsPage,
+    HomePage as HomePage,
+)
+from .pages import (
+    LoginPage as LoginPage,
+)
+from .pages import (
+    NewProjectsPage as NewProjectsPage,
+)
+from .pages import (
+    ProjectPage as ProjectPage,
+)
+from .pages import (
+    ProjectsPage as ProjectsPage,
 )

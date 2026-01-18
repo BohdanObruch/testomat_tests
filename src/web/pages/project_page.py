@@ -2,7 +2,7 @@ from typing import Self
 
 from playwright.sync_api import Page, expect
 
-from src.web.components import SideBar, NavigationTabs, AddTestMenu, NewSuite, Suite
+from src.web.components import AddTestMenu, NavigationTabs, NewSuite, SideBar, Suite
 
 
 class ProjectPage:

@@ -4,7 +4,7 @@ from playwright.sync_api import Page, expect
 
 from fixtures.config import Config
 
-TARGET_PROJECT = 'Books'
+TARGET_PROJECT = "Books"
 
 
 @pytest.fixture(scope="function")
@@ -60,15 +60,15 @@ def test_change_view_projects_list_by_table_view(page: Page, login):
 def test_choose_project_by_classic_mode(page: Page, login):
     click_create_project(page)
 
-    verify_project_mode(page, 'classical')
+    verify_project_mode(page, "classical")
 
 
 def test_choose_project_by_bdd_mode(page: Page, login):
     click_create_project(page)
 
-    page.locator('#bdd').click()
+    page.locator("#bdd").click()
 
-    verify_project_mode(page, 'bdd')
+    verify_project_mode(page, "bdd")
 
 
 def test_can_create_project_by_header_button(page: Page, login):
@@ -80,7 +80,7 @@ def test_can_create_project_by_header_button(page: Page, login):
 
 
 def verify_project_mode(page: Page, mode: str):
-    expect(page.locator(f"#{mode}")).to_have_css('border-color', 'rgb(79, 70, 229)')
+    expect(page.locator(f"#{mode}")).to_have_css("border-color", "rgb(79, 70, 229)")
     expect(page.locator(f"#{mode}-img")).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")
 
 
