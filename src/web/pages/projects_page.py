@@ -64,6 +64,9 @@ class ProjectsPage:
     def expect_info_message(self, expected_text: str):
         expect(self.info_message).to_have_text(expected_text)
 
+    def expect_tooltip_message(self, expected_text: str):
+        expect(self.page.get_by_text(expected_text)).to_be_visible()
+
     def expect_table_view_active(self):
         expect(self.table).to_be_visible()
         expect(self.header.table_view_button).to_contain_class("active_list_type")

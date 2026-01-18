@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import json
 import os
 import time
 from collections.abc import Generator
@@ -10,23 +11,35 @@ from typing import TYPE_CHECKING
 import pytest
 from playwright.sync_api import Browser, BrowserContext, Page, ViewportSize, sync_playwright
 
-from fixtures.config import Config
 from src.web.application import Application
+from tests.fixtures.config import Config
+from web.helpers import CookieHelper, clear_browser_state
 
 if TYPE_CHECKING:
-    from fixtures.settings import PlaywrightSettings
+    from tests.fixtures.settings import PlaywrightSettings
 
 
-def clear_browser_state(page: Page) -> None:
-    """Clear cookies and local storage for the current page context."""
-    page.context.clear_cookies()
-    clear_page_storage(page)
+def _auth_storage_path(settings: PlaywrightSettings) -> Path:
+    return settings.output_dir / ".auth" / "storage_state.json"
 
 
-def clear_page_storage(page: Page) -> None:
-    """Clear local/session storage without touching cookies."""
-    page.evaluate("window.localStorage.clear()")
-    page.evaluate("window.sessionStorage.clear()")
+def _free_project_storage_path(settings: PlaywrightSettings) -> Path:
+    return settings.output_dir / ".auth" / "free_project_state.json"
+
+
+def create_free_project_state(storage_state_path: Path, free_project_path: Path) -> None:
+    """Create a free project state by copying the storage state with empty company_id."""
+    if not storage_state_path.exists():
+        return
+
+    state = json.loads(storage_state_path.read_text())
+    for cookie in state.get("cookies", []):
+        if cookie.get("name") == "company_id":
+            cookie["value"] = ""
+            break
+
+    free_project_path.parent.mkdir(parents=True, exist_ok=True)
+    free_project_path.write_text(json.dumps(state, indent=2))
 
 
 def _test_failed(request: pytest.FixtureRequest) -> bool:
@@ -197,7 +210,7 @@ def build_browser_context(
         "timezone_id": "Europe/Kyiv",
         "permissions": ["geolocation"],
     }
-    if storage_state is not None:
+    if storage_state is not None and storage_state.exists():
         context_kwargs["storage_state"] = str(storage_state)
     if enable_video and _normalized_option(settings.video) in {"on", "retain-on-failure"}:
         settings.video_dir.mkdir(parents=True, exist_ok=True)
@@ -219,7 +232,12 @@ def auth_state(
     configs: Config,
     playwright_settings: PlaywrightSettings,
 ) -> Path:
-    auth_path = playwright_settings.output_dir / "auth_state.json"
+    auth_path = _auth_storage_path(playwright_settings)
+    free_project_path = _free_project_storage_path(playwright_settings)
+    if auth_path.exists():
+        if not free_project_path.exists():
+            create_free_project_state(auth_path, free_project_path)
+        return auth_path
     auth_path.parent.mkdir(parents=True, exist_ok=True)
     context = build_browser_context(browser_instance, configs, playwright_settings, enable_video=False)
     page = context.new_page()
@@ -228,6 +246,7 @@ def auth_state(
     app.login_page.is_loaded()
     app.login_page.login_user(configs.email, configs.password)
     context.storage_state(path=str(auth_path))
+    create_free_project_state(auth_path, free_project_path)
     page.close()
     context.close()
     return auth_path
@@ -298,6 +317,52 @@ def logged_app(
     playwright_settings: PlaywrightSettings,
 ) -> Generator[Application]:
     page = logged_context.new_page()
+    page.goto("/projects")
+    try:
+        yield Application(page)
+    finally:
+        _finalize_page(page, request, playwright_settings)
+
+
+@pytest.fixture(scope="function")
+def cookies(logged_context: BrowserContext) -> CookieHelper:
+    return CookieHelper(logged_context)
+
+
+# 2.1 Logged app - isolated context per test with free project auth state
+@pytest.fixture(scope="function")
+def free_project_context(
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    auth_state: Path,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
+    free_project_path = _free_project_storage_path(playwright_settings)
+    if not free_project_path.exists():
+        create_free_project_state(auth_state, free_project_path)
+    context = build_browser_context(
+        browser_instance,
+        configs,
+        playwright_settings,
+        storage_state=free_project_path,
+    )
+    _start_tracing(context, playwright_settings)
+    try:
+        yield context
+    finally:
+        _stop_tracing(context, request, playwright_settings)
+        context.close()
+
+
+@pytest.fixture(scope="function")
+def free_project_app(
+    free_project_context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Application]:
+    page = free_project_context.new_page()
+    page.goto("/projects")
     try:
         yield Application(page)
     finally:

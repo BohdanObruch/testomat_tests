@@ -2,7 +2,7 @@ from typing import Self
 
 from playwright.sync_api import Page, expect
 
-from src.web.components import AddTestMenu, NavigationTabs, NewSuite, SideBar, Suite
+from src.web.components import AddTestMenu, NavigationTabs, NewSuite, SideBar, Suite, TestModal
 
 
 class ProjectPage:
@@ -12,6 +12,7 @@ class ProjectPage:
         self.navigation_tabs = NavigationTabs(page)
         self.test_menu = AddTestMenu(page)
         self.add_suite = NewSuite(page)
+        self.test_modal = TestModal(page)
         self.suite = Suite(page)
         self.header = self.page.locator(".sticky-header")
         self.navigation_menu = self.page.locator(".mainnav-menu")

@@ -19,7 +19,6 @@ def test_new_project_creation(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_choose_project_by_classic_mode(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.click_create()
 
     logged_app.new_projects_page.is_loaded()
@@ -30,7 +29,6 @@ def test_choose_project_by_classic_mode(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_choose_project_by_bdd_mode(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.click_create()
     logged_app.new_projects_page.is_loaded()
 
@@ -41,7 +39,6 @@ def test_choose_project_by_bdd_mode(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_can_create_project_by_header_button(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.open_new_project_from_header()
 
     logged_app.new_projects_page.is_loaded()

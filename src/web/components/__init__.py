@@ -6,3 +6,4 @@ from .project_card import ProjectCard as ProjectCard
 from .projects_header import ProjectsHeader as ProjectsHeader
 from .side_bar import SideBar as SideBar
 from .suite import Suite as Suite
+from .test_modal import TestModal as TestModal

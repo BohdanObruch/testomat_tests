@@ -12,7 +12,6 @@ def test_create_test_suite(logged_app: Application):
     suite_title_name = Faker().company()
     suite_description = Faker().paragraph()
 
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.search_project(TARGET_PROJECT)
     logged_app.projects_page.click_project_by_title(TARGET_PROJECT)
 

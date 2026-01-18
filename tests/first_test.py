@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 from playwright.sync_api import Page, expect
 
-from fixtures.config import Config
+from tests.fixtures import Config
 
 TARGET_PROJECT = "Books"
 
