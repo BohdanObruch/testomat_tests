@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+from faker import Faker
 from playwright.sync_api import Browser, BrowserContext, Page, ViewportSize, sync_playwright
 
 from src.web.application import Application
@@ -394,3 +395,11 @@ def shared_page(
     finally:
         _capture_screenshot(shared_browser, request, playwright_settings)
         clear_browser_state(shared_browser)
+
+
+@pytest.fixture(scope="function")
+def created_project(logged_app: Application):
+    """Create a new project"""
+    project_name = Faker().company()
+    logged_app.new_projects_page.open().is_loaded().fill_project_title(project_name).click_create()
+    logged_app.project_page.is_loaded_empty_project().empty_project_name_is(project_name).close_read_me()
