@@ -1,30 +1,46 @@
 from __future__ import annotations
 
+import contextlib
+import json
 import os
 import time
+from collections.abc import Generator
 from pathlib import Path
-from typing import Generator, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import pytest
+from faker import Faker
 from playwright.sync_api import Browser, BrowserContext, Page, ViewportSize, sync_playwright
 
-from fixtures.config import Config
 from src.web.application import Application
+from tests.fixtures.config import Config
+from web.helpers import CookieHelper, clear_browser_state
 
 if TYPE_CHECKING:
-    from fixtures.settings import PlaywrightSettings
+    from tests.fixtures.settings import PlaywrightSettings
 
 
-def clear_browser_state(page: Page) -> None:
-    """Clear cookies and local storage for the current page context."""
-    page.context.clear_cookies()
-    clear_page_storage(page)
+def _auth_storage_path(settings: PlaywrightSettings) -> Path:
+    return settings.output_dir / ".auth" / "storage_state.json"
 
 
-def clear_page_storage(page: Page) -> None:
-    """Clear local/session storage without touching cookies."""
-    page.evaluate("window.localStorage.clear()")
-    page.evaluate("window.sessionStorage.clear()")
+def _free_project_storage_path(settings: PlaywrightSettings) -> Path:
+    return settings.output_dir / ".auth" / "free_project_state.json"
+
+
+def create_free_project_state(storage_state_path: Path, free_project_path: Path) -> None:
+    """Create a free project state by copying the storage state with empty company_id."""
+    if not storage_state_path.exists():
+        return
+
+    state = json.loads(storage_state_path.read_text())
+    for cookie in state.get("cookies", []):
+        if cookie.get("name") == "company_id":
+            cookie["value"] = ""
+            break
+
+    free_project_path.parent.mkdir(parents=True, exist_ok=True)
+    free_project_path.write_text(json.dumps(state, indent=2))
 
 
 def _test_failed(request: pytest.FixtureRequest) -> bool:
@@ -32,16 +48,16 @@ def _test_failed(request: pytest.FixtureRequest) -> bool:
     return bool(rep_call and rep_call.failed)
 
 
-def _normalized_option(value: Optional[str]) -> str:
+def _normalized_option(value: str | None) -> str:
     return (value or "off").lower()
 
 
 def _option_enabled(
-        option: Optional[str],
-        *,
-        on_value: str,
-        on_failure_value: str,
-        request: pytest.FixtureRequest,
+    option: str | None,
+    *,
+    on_value: str,
+    on_failure_value: str,
+    request: pytest.FixtureRequest,
 ) -> bool:
     normalized = _normalized_option(option)
     if normalized == on_value:
@@ -82,10 +98,8 @@ def _capture_screenshot(page: Page, request: pytest.FixtureRequest, settings: Pl
     settings.screenshot_dir.mkdir(parents=True, exist_ok=True)
     browser_name = _browser_name_from_context(page.context)
     path = settings.screenshot_dir / f"{_artifact_basename(request, browser_name)}.png"
-    try:
+    with contextlib.suppress(Exception):
         page.screenshot(path=str(path), full_page=True)
-    except Exception:
-        pass
 
 
 def _finalize_page(page: Page, request: pytest.FixtureRequest, settings: PlaywrightSettings) -> None:
@@ -123,10 +137,10 @@ def _save_video(video, target: Path) -> bool:
 
 
 def _cleanup_video(
-        video,
-        request: pytest.FixtureRequest,
-        settings: PlaywrightSettings,
-        browser_name: str,
+    video,
+    request: pytest.FixtureRequest,
+    settings: PlaywrightSettings,
+    browser_name: str,
 ) -> None:
     if not video:
         return
@@ -142,10 +156,8 @@ def _cleanup_video(
     if target == path:
         return
     if _save_video(video, target):
-        try:
+        with contextlib.suppress(Exception):
             os.remove(path)
-        except Exception:
-            pass
         return
     _retry_on_permission(lambda: os.replace(path, target))
 
@@ -167,9 +179,9 @@ def _start_tracing(context: BrowserContext, settings: PlaywrightSettings) -> Non
 
 
 def _stop_tracing(
-        context: BrowserContext,
-        request: pytest.FixtureRequest,
-        settings: PlaywrightSettings,
+    context: BrowserContext,
+    request: pytest.FixtureRequest,
+    settings: PlaywrightSettings,
 ) -> None:
     option = _normalized_option(settings.tracing)
     if option not in {"on", "retain-on-failure"}:
@@ -184,12 +196,12 @@ def _stop_tracing(
 
 
 def build_browser_context(
-        browser_instance: Browser,
-        configs: Config,
-        settings: PlaywrightSettings,
-        *,
-        enable_video: bool = True,
-        storage_state: Optional[Path] = None,
+    browser_instance: Browser,
+    configs: Config,
+    settings: PlaywrightSettings,
+    *,
+    enable_video: bool = True,
+    storage_state: Path | None = None,
 ) -> BrowserContext:
     viewport: ViewportSize = {"width": 1920, "height": 1080}
     context_kwargs = {
@@ -199,7 +211,7 @@ def build_browser_context(
         "timezone_id": "Europe/Kyiv",
         "permissions": ["geolocation"],
     }
-    if storage_state is not None:
+    if storage_state is not None and storage_state.exists():
         context_kwargs["storage_state"] = str(storage_state)
     if enable_video and _normalized_option(settings.video) in {"on", "retain-on-failure"}:
         settings.video_dir.mkdir(parents=True, exist_ok=True)
@@ -208,7 +220,7 @@ def build_browser_context(
 
 
 @pytest.fixture(scope="session")
-def browser_instance() -> Generator[Browser, None, None]:
+def browser_instance() -> Generator[Browser]:
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False, slow_mo=0, timeout=30000)
         yield browser
@@ -217,11 +229,16 @@ def browser_instance() -> Generator[Browser, None, None]:
 
 @pytest.fixture(scope="session")
 def auth_state(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
 ) -> Path:
-    auth_path = playwright_settings.output_dir / "auth_state.json"
+    auth_path = _auth_storage_path(playwright_settings)
+    free_project_path = _free_project_storage_path(playwright_settings)
+    if auth_path.exists():
+        if not free_project_path.exists():
+            create_free_project_state(auth_path, free_project_path)
+        return auth_path
     auth_path.parent.mkdir(parents=True, exist_ok=True)
     context = build_browser_context(browser_instance, configs, playwright_settings, enable_video=False)
     page = context.new_page()
@@ -230,6 +247,7 @@ def auth_state(
     app.login_page.is_loaded()
     app.login_page.login_user(configs.email, configs.password)
     context.storage_state(path=str(auth_path))
+    create_free_project_state(auth_path, free_project_path)
     page.close()
     context.close()
     return auth_path
@@ -238,11 +256,11 @@ def auth_state(
 # 1. Clean app - fresh page per test (function scope)
 @pytest.fixture(scope="function")
 def context(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
-        request: pytest.FixtureRequest,
-) -> Generator[BrowserContext, None, None]:
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
     context = build_browser_context(browser_instance, configs, playwright_settings)
     _start_tracing(context, playwright_settings)
     try:
@@ -254,10 +272,10 @@ def context(
 
 @pytest.fixture(scope="function")
 def page(
-        context: BrowserContext,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
-) -> Generator[Page, None, None]:
+    context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Page]:
     page = context.new_page()
     try:
         yield page
@@ -273,12 +291,12 @@ def app(page: Page) -> Application:
 # 2. Logged app - isolated context per test with shared auth state
 @pytest.fixture(scope="function")
 def logged_context(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
-        auth_state: Path,
-        request: pytest.FixtureRequest,
-) -> Generator[BrowserContext, None, None]:
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    auth_state: Path,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
     context = build_browser_context(
         browser_instance,
         configs,
@@ -295,11 +313,57 @@ def logged_context(
 
 @pytest.fixture(scope="function")
 def logged_app(
-        logged_context: BrowserContext,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
-) -> Generator[Application, None, None]:
+    logged_context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Application]:
     page = logged_context.new_page()
+    page.goto("/projects")
+    try:
+        yield Application(page)
+    finally:
+        _finalize_page(page, request, playwright_settings)
+
+
+@pytest.fixture(scope="function")
+def cookies(logged_context: BrowserContext) -> CookieHelper:
+    return CookieHelper(logged_context)
+
+
+# 2.1 Logged app - isolated context per test with free project auth state
+@pytest.fixture(scope="function")
+def free_project_context(
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
+    auth_state: Path,
+    request: pytest.FixtureRequest,
+) -> Generator[BrowserContext]:
+    free_project_path = _free_project_storage_path(playwright_settings)
+    if not free_project_path.exists():
+        create_free_project_state(auth_state, free_project_path)
+    context = build_browser_context(
+        browser_instance,
+        configs,
+        playwright_settings,
+        storage_state=free_project_path,
+    )
+    _start_tracing(context, playwright_settings)
+    try:
+        yield context
+    finally:
+        _stop_tracing(context, request, playwright_settings)
+        context.close()
+
+
+@pytest.fixture(scope="function")
+def free_project_app(
+    free_project_context: BrowserContext,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
+) -> Generator[Application]:
+    page = free_project_context.new_page()
+    page.goto("/projects")
     try:
         yield Application(page)
     finally:
@@ -309,9 +373,9 @@ def logged_app(
 # 3. Shared context for parametrized tests (module scope)
 @pytest.fixture(scope="module")
 def shared_browser(
-        browser_instance: Browser,
-        configs: Config,
-        playwright_settings: PlaywrightSettings,
+    browser_instance: Browser,
+    configs: Config,
+    playwright_settings: PlaywrightSettings,
 ) -> Generator[Page]:
     context = build_browser_context(browser_instance, configs, playwright_settings, enable_video=False)
     page = context.new_page()
@@ -322,12 +386,20 @@ def shared_browser(
 
 @pytest.fixture(scope="function")
 def shared_page(
-        shared_browser: Page,
-        request: pytest.FixtureRequest,
-        playwright_settings: PlaywrightSettings,
+    shared_browser: Page,
+    request: pytest.FixtureRequest,
+    playwright_settings: PlaywrightSettings,
 ) -> Generator[Application]:
     try:
         yield Application(shared_browser)
     finally:
         _capture_screenshot(shared_browser, request, playwright_settings)
         clear_browser_state(shared_browser)
+
+
+@pytest.fixture(scope="function")
+def created_project(logged_app: Application):
+    """Create a new project"""
+    project_name = Faker().company()
+    logged_app.new_projects_page.open().is_loaded().fill_project_title(project_name).click_create()
+    logged_app.project_page.is_loaded_empty_project().empty_project_name_is(project_name).close_read_me()

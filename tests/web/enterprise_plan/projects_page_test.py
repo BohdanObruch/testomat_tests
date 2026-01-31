@@ -9,8 +9,6 @@ TARGET_PROJECT = "Books"
 @pytest.mark.smoke
 @pytest.mark.web
 def test_search_project_in_company(logged_app: Application):
-    logged_app.projects_page.navigate()
-
     logged_app.projects_page.verify_page_loaded()
 
     logged_app.projects_page.header.check_selected_company("QA Club Lviv")
@@ -25,7 +23,6 @@ def test_search_project_in_company(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_should_be_possible_to_open_free_project(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.select_company("Free Projects")
     logged_app.projects_page.header.search_project(TARGET_PROJECT)
 
@@ -36,7 +33,6 @@ def test_should_be_possible_to_open_free_project(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_can_not_create_project_without_company(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.select_company("Free Projects")
     logged_app.projects_page.header.click_create()
 
@@ -48,7 +44,6 @@ def test_can_not_create_project_without_company(logged_app: Application):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_change_view_projects_list_by_table_view(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.header.switch_to_table_view()
 
     logged_app.projects_page.expect_table_view_active()

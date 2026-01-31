@@ -48,5 +48,4 @@ def test_login_invalid(shared_page: Application, email: str, password: str):
 @pytest.mark.smoke
 @pytest.mark.web
 def test_login_with_valid_credential(logged_app: Application):
-    logged_app.projects_page.navigate()
     logged_app.projects_page.verify_page_loaded()
