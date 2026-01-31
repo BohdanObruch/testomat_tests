@@ -6,56 +6,63 @@ Playwright-based end-to-end testing framework for [Testomat](https://testomat.io
 
 ```
 testomat_tests/
-├── src/                          # Source code
-│   └── web/                      # Web UI automation
-│       ├── application.py        # Application facade (entry point)
-│       ├── helpers/              # Helpers/utilities
-│       │   └── cookie_helper.py
-│       ├── pages/                # Page Object Models
-│       │   ├── home_page.py
-│       │   ├── login_page.py
-│       │   ├── new_projects_page.py
-│       │   ├── project_page.py
-│       │   └── projects_page.py
-│       └── components/           # Reusable UI components
-│           ├── add_test_menu.py
-│           ├── navigation_tabs.py
-│           ├── new_suite.py
-│           ├── project_card.py
-│           ├── projects_header.py
-│           ├── side_bar.py
-│           ├── suite.py
-│           └── test_modal.py
-│
-├── tests/                        # Test suite
-│   ├── conftest.py               # Pytest plugins
-│   ├── fixtures/                 # Shared pytest fixtures
-│   │   ├── config.py
-│   │   ├── hooks.py
-│   │   ├── playwright.py
-│   │   └── settings.py
-│   ├── first_test.py
-│   └── web/                      # Web UI tests
-│       ├── cookies_test.py
-│       ├── login_page_test.py
-│       ├── enterprise_plan/
-│       │   ├── project_creation_test.py
-│       │   ├── projects_page_test.py
-│       │   ├── switch_company_test.py
-│       │   └── test_create_suite.py
-│       └── free_plan/
-│           └── free_projects_test.py
-│
-├── test-result/                  # Test execution results
-│   ├── report.html               # HTML report (pytest-html)
-│   ├── screenshots/              # Screenshots on failure
-│   ├── traces/                   # Playwright traces
-│   ├── videos/                   # Video recordings
-│   └── .auth/                    # Auth state storage
-│
-├── .env                          # Environment configuration
-├── pyproject.toml                # Project configuration
-└── uv.lock                       # Dependency lock file
+|-- src/                          # Source code
+|   |-- api/                      # API client + models
+|   |   |-- client.py
+|   |   `-- models/
+|   |       `-- project.py
+|   `-- web/                      # Web UI automation
+|       |-- application.py        # Application facade (entry point)
+|       |-- helpers/              # Helpers/utilities
+|       |   `-- cookie_helper.py
+|       |-- pages/                # Page Object Models
+|       |   |-- home_page.py
+|       |   |-- login_page.py
+|       |   |-- new_projects_page.py
+|       |   |-- project_page.py
+|       |   `-- projects_page.py
+|       `-- components/           # Reusable UI components
+|           |-- add_test_menu.py
+|           |-- navigation_tabs.py
+|           |-- new_suite.py
+|           |-- project_card.py
+|           |-- projects_header.py
+|           |-- side_bar.py
+|           |-- suite.py
+|           `-- test_modal.py
+|
+|-- tests/                        # Test suite
+|   |-- conftest.py               # Pytest plugins
+|   |-- fixtures/                 # Shared pytest fixtures
+|   |   |-- api.py
+|   |   |-- config.py
+|   |   |-- hooks.py
+|   |   |-- playwright.py
+|   |   `-- settings.py
+|   |-- first_test.py
+|   `-- web/                      # Web UI + API tests
+|       |-- api/
+|       |   `-- projects_test.py
+|       |-- cookies_test.py
+|       |-- login_page_test.py
+|       |-- enterprise_plan/
+|       |   |-- project_creation_test.py
+|       |   |-- projects_page_test.py
+|       |   |-- switch_company_test.py
+|       |   `-- test_create_suite.py
+|       `-- free_plan/
+|           `-- free_projects_test.py
+|
+|-- test-result/                  # Test execution results
+|   |-- report.html               # HTML report (pytest-html)
+|   |-- screenshots/              # Screenshots on failure
+|   |-- traces/                   # Playwright traces
+|   |-- videos/                   # Video recordings
+|   `-- .auth/                    # Auth state storage
+|
+|-- .env                          # Environment configuration
+|-- pyproject.toml                # Project configuration
+`-- uv.lock                       # Dependency lock file
 ```
 
 ## Requirements
@@ -96,6 +103,7 @@ BASE_URL=https://testomat.io
 BASE_APP_URL=https://app.testomat.io
 EMAIL=your_email@example.com
 PASSWORD=your_password
+TESTOMAT_TOKEN=your_api_token
 ```
 
 ## Running Tests
@@ -112,6 +120,9 @@ pytest -m regression
 
 # Run web UI tests
 pytest -m web
+
+# Run API tests
+pytest tests/web/api/projects_test.py
 
 # Run specific test file
 pytest tests/web/login_page_test.py
@@ -130,6 +141,7 @@ pytest --tracing=on --screenshot=on --video=on
 | `smoke`      | Quick validation tests |
 | `regression` | Full test suite        |
 | `web`        | Web UI specific tests  |
+| `api`        | API tests using httpx  |
 | `slow`       | Long-running tests     |
 
 ## Architecture
@@ -161,6 +173,12 @@ class Application:
         # ...
 ```
 
+### API Client + Models
+
+API client lives in `src/api/client.py`, with response models in
+`src/api/models`. API tests are under `tests/web/api` and use the
+`api_client` fixture from `tests/fixtures/api.py` (JWT is cached per session).
+
 ### Fixture Strategy
 
 | Fixture            | Scope    | Purpose                            |
@@ -175,6 +193,7 @@ class Application:
 | `logged_app`       | function | Pre-authenticated page per test    |
 | `free_project_app` | function | Auth state with empty company_id   |
 | `shared_page`      | function | Shared page for parametrized tests |
+| `api_client`       | session  | Authenticated API client (JWT)     |
 
 ## Code Quality
 
@@ -213,6 +232,7 @@ Default browser settings (configured in `tests/fixtures/playwright.py`):
 - **pytest-html** - HTML reporting
 - **pytest-playwright** - Playwright pytest integration
 - **faker** - Test data generation
+- **httpx** - API client
 - **python-dotenv** - Environment variable management
 
 ### Development

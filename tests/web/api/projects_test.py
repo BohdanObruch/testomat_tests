@@ -1,8 +1,11 @@
+import pytest
+
 from src.api.client import ApiClient
 from src.api.models import Project, ProjectsResponse
 
 
 class TestAuthentication:
+    @pytest.mark.api
     def test_login_with_valid_token(self, api_client: ApiClient):
         jwt_token = api_client._authenticate()
 
@@ -10,6 +13,7 @@ class TestAuthentication:
         assert isinstance(jwt_token, str)
         assert len(jwt_token) > 0
 
+    @pytest.mark.api
     def test_jwt_token_is_cached(self, api_client: ApiClient):
         first_token = api_client._authenticate()
         second_token = api_client._authenticate()
@@ -18,12 +22,14 @@ class TestAuthentication:
 
 
 class TestGetProjects:
+    @pytest.mark.api
     def test_get_projects_returns_response(self, api_client: ApiClient):
         response = api_client.get_projects()
 
         assert response is not None
         assert isinstance(response, ProjectsResponse)
 
+    @pytest.mark.api
     def test_get_projects_returns_list_of_projects(self, api_client: ApiClient):
         response = api_client.get_projects()
 
@@ -31,6 +37,7 @@ class TestGetProjects:
         if len(response) > 0:
             assert isinstance(response[0], Project)
 
+    @pytest.mark.api
     def test_project_has_required_attributes(self, api_client: ApiClient):
         response = api_client.get_projects()
 
@@ -41,6 +48,7 @@ class TestGetProjects:
             assert project.title is not None
             assert project.status is not None
 
+    @pytest.mark.api
     def test_projects_response_is_iterable(self, api_client: ApiClient):
         projects = api_client.get_projects()
 
