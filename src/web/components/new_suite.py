@@ -53,14 +53,16 @@ class NewSuite:
         )
         self._editor_frame = self._editor.frame_locator("iframe")
         self._description_input = self._editor_frame.locator("textarea.inputarea")
+        self.suite_checkboxes = page.locator(".tree-branch input")
 
     def is_loaded(self) -> NewSuite:
-        expect(self._panel).to_be_visible()
-        expect(self._header).to_be_visible()
-        expect(self._save_button).to_be_visible()
-        expect(self._content).to_be_visible()
-        expect(self._suite_title_input).to_be_visible()
-        expect(self._editor).to_be_visible()
+        expect(self.page.get_by_role("heading", name="Select suite for test")).to_be_visible()
+        expect(self.suite_checkboxes.first).to_be_visible()
+        return self
+
+    def select_first_suite(self) -> NewSuite:
+        self.suite_checkboxes.first.click()
+        self.page.get_by_role("button", name="Select").click()
         return self
 
     def set_suite_title(self, title: str) -> NewSuite:

@@ -62,17 +62,17 @@ class Suite(NewSuite):
         )
         self._bulk_toggle = self._content.get_by_role("switch")
 
-    def suite_name_is(self, expected_name: str) -> Suite:
-        expect(self._suite_name).to_have_text(expected_name)
-        return self
-
     def is_loaded(self) -> Suite:
         expect(self._panel).to_be_visible()
         expect(self._header).to_be_visible()
-        expect(self._detail_view).to_be_visible()
-        expect(self._suite_id_link).to_be_visible()
-        expect(self._pick_emoji_button).to_be_visible()
-        expect(self._new_test_link).to_be_visible()
+        expect(self._save_button).to_be_visible()
+        expect(self._content).to_be_visible()
+        expect(self._suite_title_input).to_be_visible()
+        expect(self._editor).to_be_visible()
+        return self
+
+    def suite_name_is(self, expected_name: str) -> Suite:
+        expect(self._suite_name).to_have_text(expected_name)
         return self
 
     def breadcrumbs_has(self, expected_text: str) -> Suite:

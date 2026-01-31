@@ -3,4 +3,5 @@ pytest_plugins = (
     "tests.fixtures.hooks",
     "tests.fixtures.playwright",
     "tests.fixtures.settings",
+    "tests.fixtures.api",
 )
