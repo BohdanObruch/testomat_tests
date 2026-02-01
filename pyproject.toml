@@ -11,6 +11,7 @@ dependencies = [
     "python-dotenv==1.2.1",
     "playwright==1.57.0",
     "pytest-playwright==0.7.2",
+    "selenium==4.40.0"
 ]
 
 [dependency-groups]
@@ -48,6 +49,7 @@ markers = [
     "regression: Full regression test suite",
     "web: Web UI tests using Playwright",
     "api: API tests using httpx client",
+    "selenium: Tests using Selenium WebDriver",
     "slow: Tests that take longer to execute",
 ]
 console_output_style = "progress"

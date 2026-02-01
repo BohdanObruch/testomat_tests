@@ -222,7 +222,7 @@ def build_browser_context(
 @pytest.fixture(scope="session")
 def browser_instance() -> Generator[Browser]:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, slow_mo=0, timeout=30000)
+        browser = p.chromium.launch(headless=True, slow_mo=0, timeout=30000)
         yield browser
         browser.close()
 
@@ -399,7 +399,6 @@ def shared_page(
 
 @pytest.fixture(scope="function")
 def created_project(logged_app: Application):
-    """Create a new project"""
     project_name = Faker().company()
     logged_app.new_projects_page.open().is_loaded().fill_project_title(project_name).click_create()
     logged_app.project_page.is_loaded_empty_project().empty_project_name_is(project_name).close_read_me()

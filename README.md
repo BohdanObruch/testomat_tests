@@ -15,21 +15,41 @@ testomat_tests/
 |       |-- application.py        # Application facade (entry point)
 |       |-- helpers/              # Helpers/utilities
 |       |   `-- cookie_helper.py
-|       |-- pages/                # Page Object Models
+|       |-- pages/                # Page Object Models (Playwright)
 |       |   |-- home_page.py
 |       |   |-- login_page.py
 |       |   |-- new_projects_page.py
 |       |   |-- project_page.py
 |       |   `-- projects_page.py
-|       `-- components/           # Reusable UI components
-|           |-- add_test_menu.py
-|           |-- navigation_tabs.py
-|           |-- new_suite.py
-|           |-- project_card.py
-|           |-- projects_header.py
-|           |-- side_bar.py
-|           |-- suite.py
-|           `-- test_modal.py
+|       |-- components/           # Reusable UI components
+|       |   |-- add_test_menu.py
+|       |   |-- navigation_tabs.py
+|       |   |-- new_suite.py
+|       |   |-- project_card.py
+|       |   |-- projects_header.py
+|       |   |-- side_bar.py
+|       |   |-- suite.py
+|       |   `-- test_modal.py
+|       `-- selenium/             # Selenium framework
+|           |-- application.py
+|           |-- core/
+|           |   |-- base_page.py
+|           |   `-- waits.py
+|           |-- components/
+|           |   |-- add_test_menu.py
+|           |   |-- navigation_tabs.py
+|           |   |-- new_suite.py
+|           |   |-- project_card.py
+|           |   |-- projects_header.py
+|           |   |-- side_bar.py
+|           |   |-- suite.py
+|           |   `-- test_modal.py
+|           `-- pages/
+|               |-- login_page.py
+|               |-- login_page_v2.py
+|               |-- new_projects_page.py
+|               |-- project_page.py
+|               `-- projects_page.py
 |
 |-- tests/                        # Test suite
 |   |-- conftest.py               # Pytest plugins
@@ -38,11 +58,20 @@ testomat_tests/
 |   |   |-- config.py
 |   |   |-- hooks.py
 |   |   |-- playwright.py
+|   |   |-- selenium.py
 |   |   `-- settings.py
 |   |-- first_test.py
 |   `-- web/                      # Web UI + API tests
 |       |-- api/
 |       |   `-- projects_test.py
+|       |-- selenium/
+|       |   |-- simple_selenium_test.py
+|       |   `-- enterprise_plan/
+|       |       |-- project_creation_test.py
+|       |       |-- projects_page_test.py
+|       |       |-- switch_company_test.py
+|       |       |-- test_create_suite.py
+|       |       `-- test_delete_project.py
 |       |-- cookies_test.py
 |       |-- login_page_test.py
 |       |-- enterprise_plan/
@@ -122,10 +151,16 @@ pytest -m regression
 pytest -m web
 
 # Run API tests
-pytest tests/web/api/projects_test.py
+pytest -m api
+
+# Run Selenium tests
+pytest -m selenium
 
 # Run specific test file
 pytest tests/web/login_page_test.py
+
+# Run specific Selenium test file
+pytest tests/web/selenium/simple_selenium_test.py
 
 # Generate HTML report (default: test-result/report.html)
 pytest --html=test-result/report.html
@@ -136,13 +171,14 @@ pytest --tracing=on --screenshot=on --video=on
 
 ## Test Markers
 
-| Marker       | Description            |
-|--------------|------------------------|
-| `smoke`      | Quick validation tests |
-| `regression` | Full test suite        |
-| `web`        | Web UI specific tests  |
-| `api`        | API tests using httpx  |
-| `slow`       | Long-running tests     |
+| Marker       | Description                 |
+|--------------|-----------------------------|
+| `smoke`      | Quick validation tests      |
+| `regression` | Full test suite             |
+| `web`        | Web UI specific tests       |
+| `api`        | API tests using httpx       |
+| `selenium`   | Selenium WebDriver UI tests |
+| `slow`       | Long-running tests          |
 
 ## Architecture
 
@@ -179,21 +215,52 @@ API client lives in `src/api/client.py`, with response models in
 `src/api/models`. API tests are under `tests/web/api` and use the
 `api_client` fixture from `tests/fixtures/api.py` (JWT is cached per session).
 
+### Selenium Page Objects
+
+Selenium pages are in `src/web/selenium/pages` with shared waits and base
+classes in `src/web/selenium/core`. Reusable UI components live in
+`src/web/selenium/components`, and the Selenium entry point is
+`src/web/selenium/application.py`. Selenium tests live in
+`tests/web/selenium` (including the `enterprise_plan` suite) and use the
+`driver` fixture from `tests/fixtures/selenium.py`.
+
+### Selenium Application Facade
+
+`SeleniumApplication` provides a single entry point to Selenium pages and
+flows.
+
+```python
+def test_create_project_via_selenium(selenium_app):
+    project_name = "Acme QA"
+    (
+        selenium_app.new_projects_page.open()
+        .is_loaded()
+        .fill_project_title(project_name)
+        .click_create()
+        .is_loaded_empty_project()
+        .empty_project_name_is(project_name)
+        .close_read_me()
+    )
+```
+
 ### Fixture Strategy
 
-| Fixture            | Scope    | Purpose                            |
-|--------------------|----------|------------------------------------|
-| `configs`          | session  | Load environment variables         |
-| `browser_instance` | session  | Reuse browser across tests         |
-| `context`          | function | Fresh context per test             |
-| `page`             | function | Fresh page per test                |
-| `app`              | function | Application facade for fresh page  |
-| `auth_state`       | session  | Cached authenticated storage state |
-| `logged_context`   | function | Authenticated context per test     |
-| `logged_app`       | function | Pre-authenticated page per test    |
-| `free_project_app` | function | Auth state with empty company_id   |
-| `shared_page`      | function | Shared page for parametrized tests |
-| `api_client`       | session  | Authenticated API client (JWT)     |
+| Fixture                    | Scope    | Purpose                            |
+|----------------------------|----------|------------------------------------|
+| `configs`                  | session  | Load environment variables         |
+| `browser_instance`         | session  | Reuse browser across tests         |
+| `context`                  | function | Fresh context per test             |
+| `page`                     | function | Fresh page per test                |
+| `app`                      | function | Application facade for fresh page  |
+| `auth_state`               | session  | Cached authenticated storage state |
+| `logged_context`           | function | Authenticated context per test     |
+| `logged_app`               | function | Pre-authenticated page per test    |
+| `free_project_app`         | function | Auth state with empty company_id   |
+| `shared_page`              | function | Shared page for parametrized tests |
+| `api_client`               | session  | Authenticated API client (JWT)     |
+| `driver`                   | function | Selenium WebDriver instance        |
+| `selenium_app`             | function | Selenium app facade (logged in)    |
+| `created_project_selenium` | function | New project via Selenium app       |
 
 ## Code Quality
 
@@ -233,6 +300,7 @@ Default browser settings (configured in `tests/fixtures/playwright.py`):
 - **pytest-playwright** - Playwright pytest integration
 - **faker** - Test data generation
 - **httpx** - API client
+- **selenium** - Selenium WebDriver
 - **python-dotenv** - Environment variable management
 
 ### Development
