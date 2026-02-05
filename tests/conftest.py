@@ -4,4 +4,5 @@ pytest_plugins = (
     "tests.fixtures.playwright",
     "tests.fixtures.settings",
     "tests.fixtures.api",
+    "tests.fixtures.selenium",
 )
