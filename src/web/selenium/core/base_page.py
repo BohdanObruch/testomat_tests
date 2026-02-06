@@ -38,6 +38,7 @@ class BasePage:
     def type_text(self, target: SelectorOrElement, text: str, clear: bool = True) -> Self:
         element = self.wait.for_visible(target)
         if clear:
+            element.click()
             element.clear()
         element.send_keys(text)
         return self

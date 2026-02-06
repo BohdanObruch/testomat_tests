@@ -9,8 +9,40 @@ testomat_tests/
 |-- src/                          # Source code
 |   |-- api/                      # API client + models
 |   |   |-- client.py
-|   |   `-- models/
-|   |       `-- project.py
+|   |   |-- logger.py
+|   |   |-- utils.py
+|   |   |-- controllers/          # API endpoint controllers
+|   |   |   |-- analytics.py
+|   |   |   |-- attachment.py
+|   |   |   |-- comment.py
+|   |   |   |-- jira_issue.py
+|   |   |   |-- permission.py
+|   |   |   |-- plan.py
+|   |   |   |-- project.py
+|   |   |   |-- run.py
+|   |   |   |-- rungroup.py
+|   |   |   |-- settings.py
+|   |   |   |-- step.py
+|   |   |   |-- suite.py
+|   |   |   |-- template.py
+|   |   |   |-- test.py
+|   |   |   |-- testrun.py
+|   |   |   |-- timeline.py
+|   |   |   |-- user.py
+|   |   |   `-- user_project.py
+|   |   `-- models/               # API response/request models
+|   |       |-- jira_issue.py
+|   |       |-- jira_issues.py
+|   |       |-- plans.py
+|   |       |-- project.py
+|   |       |-- responses.py
+|   |       |-- run.py
+|   |       |-- run_group.py
+|   |       |-- step.py
+|   |       |-- suite.py
+|   |       |-- template.py
+|   |       |-- test.py
+|   |       `-- test_run.py
 |   `-- web/                      # Web UI automation
 |       |-- application.py        # Application facade (entry point)
 |       |-- helpers/              # Helpers/utilities
@@ -61,9 +93,16 @@ testomat_tests/
 |   |   |-- selenium.py
 |   |   `-- settings.py
 |   |-- first_test.py
-|   `-- web/                      # Web UI + API tests
-|       |-- api/
-|       |   `-- projects_test.py
+|   |-- api/                      # API tests
+|   |   |-- projects_test.py
+|   |   |-- suite_and_test_creation_test.py
+|   |   |-- test_analytics.py
+|   |   |-- test_misc.py
+|   |   |-- test_plans.py
+|   |   |-- test_runs.py
+|   |   |-- test_suites.py
+|   |   `-- test_templates.py
+|   `-- web/                      # Web UI tests
 |       |-- selenium/
 |       |   |-- simple_selenium_test.py
 |       |   `-- enterprise_plan/
@@ -212,8 +251,9 @@ class Application:
 ### API Client + Models
 
 API client lives in `src/api/client.py`, with response models in
-`src/api/models`. API tests are under `tests/web/api` and use the
-`api_client` fixture from `tests/fixtures/api.py` (JWT is cached per session).
+`src/api/models`. API tests are under `tests/api` and use the `api_client`
+fixture from `tests/fixtures/api.py` (JWT is cached per session).
+Models are built with Pydantic.
 
 ### Selenium Page Objects
 
@@ -300,6 +340,7 @@ Default browser settings (configured in `tests/fixtures/playwright.py`):
 - **pytest-playwright** - Playwright pytest integration
 - **faker** - Test data generation
 - **httpx** - API client
+- **pydantic** - Data validation and API models
 - **selenium** - Selenium WebDriver
 - **python-dotenv** - Environment variable management
 

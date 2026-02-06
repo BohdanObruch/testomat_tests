@@ -1,19 +1,21 @@
 import pytest
+from faker import Faker
 
 from src.api.client import ApiClient
-from src.api.models import Project, ProjectsResponse
+from src.api.controllers import CaseClient
+from src.api.models import CaseModel, Project, ProjectsResponse
+
+fake = Faker()
 
 
+@pytest.mark.api
 class TestAuthentication:
-    @pytest.mark.api
     def test_login_with_valid_token(self, api_client: ApiClient):
         jwt_token = api_client._authenticate()
 
-        assert jwt_token is not None
         assert isinstance(jwt_token, str)
-        assert len(jwt_token) > 0
+        assert jwt_token
 
-    @pytest.mark.api
     def test_jwt_token_is_cached(self, api_client: ApiClient):
         first_token = api_client._authenticate()
         second_token = api_client._authenticate()
@@ -21,38 +23,40 @@ class TestAuthentication:
         assert first_token == second_token
 
 
-class TestGetProjects:
-    @pytest.mark.api
+@pytest.mark.api
+class TestProjects:
     def test_get_projects_returns_response(self, api_client: ApiClient):
         response = api_client.get_projects()
 
-        assert response is not None
         assert isinstance(response, ProjectsResponse)
 
-    @pytest.mark.api
     def test_get_projects_returns_list_of_projects(self, api_client: ApiClient):
         response = api_client.get_projects()
 
         assert isinstance(response.data, list)
-        if len(response) > 0:
+        if response:
             assert isinstance(response[0], Project)
 
-    @pytest.mark.api
     def test_project_has_required_attributes(self, api_client: ApiClient):
         response = api_client.get_projects()
 
-        if len(response) > 0:
+        if response:
             project = response[0]
-            assert project.id is not None
+            assert project.id
             assert project.type == "project"
-            assert project.title is not None
-            assert project.status is not None
+            assert project.title
+            assert project.status
 
-    @pytest.mark.api
-    def test_projects_response_is_iterable(self, api_client: ApiClient):
-        projects = api_client.get_projects()
 
-        for project in projects:
-            print(f"{project.id}")
-            print(f"{project.title} - {project.status}")
-            print(f"Tests: {project.tests_count}")
+class TestProjectTests:
+    def test_list_project_tests(self, project: Project, test_api: CaseClient):
+        tests = test_api.list(project.id)
+        assert isinstance(tests, list)
+
+    def test_update_project_test(self, project: Project, test_api: CaseClient, created_test: CaseModel):
+        updated = test_api.update(
+            project_id=project.id,
+            test_id=created_test.id,
+            title=fake.sentence(),
+        )
+        assert updated.id == created_test.id
