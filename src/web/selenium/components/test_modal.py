@@ -21,7 +21,7 @@ class TestModal(BasePage):
 
     def is_loaded(self, artifact_type: str):
         self.wait.for_visible(self._heading(f"New {artifact_type}"))
-        self.wait.for_visible(self.TITLE_INPUT)
+        self.wait.for_visible(self.TITLE_INPUT, custom_timeout=15)
         return self
 
     def set_title(self, title: str):

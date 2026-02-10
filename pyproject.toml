@@ -11,12 +11,14 @@ dependencies = [
     "python-dotenv==1.2.1",
     "playwright==1.57.0",
     "pytest-playwright==0.7.2",
-    "selenium==4.40.0"
+    "selenium==4.40.0",
+    "pydantic==2.12.5",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.14.14",
+    "datamodel-code-generator==0.53.0",
+    "ruff>=0.15.0",
 ]
 
 [build-system]
@@ -99,3 +101,10 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.datamodel-codegen]
+input = "./api_testomat.json"
+output = "./src/api/models/models.py"
+target-python-version = "3.14"
+snake-case-field = true
+field-constraints = true

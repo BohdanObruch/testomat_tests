@@ -19,7 +19,7 @@ class NewSuite(BasePage):
     DESCRIPTION_INPUT = (By.CSS_SELECTOR, "textarea.inputarea")
 
     SELECT_SUITE_HEADING = (By.XPATH, "//*[normalize-space()='Select suite for test']")
-    SUITE_CHECKBOXES = (By.CSS_SELECTOR, ".tree-branch input")
+    SUITE_CHECKBOXES = (By.CSS_SELECTOR, ".tree-branch")  # .tree-branch input
     SELECT_BUTTON = (By.XPATH, "//button[normalize-space()='Select']")
 
     def __init__(self, driver: WebDriver):
