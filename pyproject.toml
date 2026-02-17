@@ -8,7 +8,6 @@ dependencies = [
     "httpx==0.28.1",
     "pytest==9.0.2",
     "pytest-xdist==3.8.0",
-    "pytest-rerunfailures==16.1",
     "allure-pytest==2.15.3",
     "python-dotenv==1.2.1",
     "playwright==1.58.0",
@@ -39,8 +38,6 @@ norecursedirs = [".git", ".venv", ".claude", ".idea", "__pycache__", "build", "d
 addopts = [
     "-v",
     "-ra",
-    "--reruns=1",
-    "--reruns-delay=10",
     "--strict-markers",
     "--tb=short",
     "--tracing=retain-on-failure",
