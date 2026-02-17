@@ -39,13 +39,7 @@ def _should_take_screenshot(settings: PlaywrightSettings, request: pytest.Fixtur
 
 def _artifact_basename(request: pytest.FixtureRequest) -> str:
     name = request.node.nodeid
-    return (
-        name.replace("::", "__")
-        .replace("/", "_")
-        .replace("\\", "_")
-        .replace("[", "_")
-        .replace("]", "_")
-    )
+    return name.replace("::", "__").replace("/", "_").replace("\\", "_").replace("[", "_").replace("]", "_")
 
 
 def _capture_screenshot(driver: WebDriver, request: pytest.FixtureRequest, settings: PlaywrightSettings) -> None:
