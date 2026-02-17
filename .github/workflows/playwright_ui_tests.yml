@@ -32,17 +32,14 @@ jobs:
         suite: [ smoke, regression ]
     steps:
       - name: Checkout
-        if: ${{ inputs.test_suite == 'all' || inputs.test_suite == matrix.suite }}
         uses: actions/checkout@v4
 
       - name: Setup environment
-        if: ${{ inputs.test_suite == 'all' || inputs.test_suite == matrix.suite }}
         uses: ./.github/actions/setup
         with:
           install-playwright: 'true'
 
       - name: Run ${{ matrix.suite }} Playwright tests
-        if: ${{ inputs.test_suite == 'all' || inputs.test_suite == matrix.suite }}
         env:
           CI: true
           BASE_URL: ${{ secrets.BASE_URL }}
@@ -50,10 +47,15 @@ jobs:
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
           TESTOMAT_TOKEN: ${{ secrets.TESTOMAT_TOKEN }}
-        run: uv run pytest tests/web -m "${{ matrix.suite }} and not selenium" -n 3 --dist=loadscope
+        run: |
+          if [ "${{ inputs.test_suite }}" != "all" ] && [ "${{ inputs.test_suite }}" != "${{ matrix.suite }}" ]; then
+            echo "Skipping ${{ matrix.suite }} suite (requested: ${{ inputs.test_suite }})"
+            exit 0
+          fi
+          uv run pytest tests/web -m "${{ matrix.suite }} and not selenium" -n 3 --dist=loadscope
 
       - name: Upload Allure results
-        if: ${{ always() && (inputs.test_suite == 'all' || inputs.test_suite == matrix.suite) }}
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-${{ matrix.suite }}-allure-results
@@ -62,7 +64,7 @@ jobs:
           retention-days: 14
 
       - name: Upload traces
-        if: ${{ failure() && (inputs.test_suite == 'all' || inputs.test_suite == matrix.suite) }}
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-${{ matrix.suite }}-traces
