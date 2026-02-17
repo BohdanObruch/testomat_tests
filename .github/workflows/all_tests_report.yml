@@ -1,0 +1,75 @@
+name: All Tests And Unified Report
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+on:
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 8 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: all
+        type: choice
+        options:
+          - smoke
+          - regression
+          - all
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Run Ruff linter
+        run: uv run ruff check .
+
+      - name: Run Ruff formatter check
+        run: uv run ruff format --check .
+
+  run-playwright:
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    with:
+      test_suite: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+    secrets: inherit
+
+  run-api:
+    uses: ./.github/workflows/api_tests.yml
+    with:
+      test_suite: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+    secrets: inherit
+
+  run-selenium:
+    uses: ./.github/workflows/selenium_tests.yml
+    with:
+      test_suite: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+    secrets: inherit
+
+  publish-report:
+    runs-on: ubuntu-latest
+    needs: [ run-playwright, run-api, run-selenium ]
+    if: always()
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - name: Publish unified Allure 3 report to Pages
+        id: publish
+        uses: ./.github/actions/publish-allure-pages
+        with:
+          report-title: Unified Test Reports
+          artifact-prefix-1: playwright
+          artifact-prefix-2: api
+          artifact-prefix-3: selenium

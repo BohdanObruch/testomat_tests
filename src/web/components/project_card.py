@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING
 
+import allure
 from playwright.sync_api import Locator, expect
 
 if TYPE_CHECKING:
@@ -31,9 +32,11 @@ class ProjectCard:
     def href(self) -> str:
         return self._link.get_attribute("href")
 
+    @allure.step("Verify project card has badge: {expected_badge}")
     def badges_has(self, expected_badge: Badges):
         expect(self._badges).to_contain_text(expected_badge.value)
 
+    @allure.step("Open project card")
     def click(self):
         self._link.click()
 

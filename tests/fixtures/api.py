@@ -1,3 +1,4 @@
+import allure
 import httpx
 import pytest
 from faker import Faker
@@ -32,13 +33,14 @@ fake = Faker()
 @pytest.fixture(scope="session")
 def auth_token(configs: Config) -> str:
     """Single authentication token shared across all controllers."""
-    response = httpx.post(
-        f"{configs.app_base_url}/api/login",
-        json={"api_token": configs.testomat_token},
-        timeout=30,
-    )
-    response.raise_for_status()
-    return response.json()["jwt"]
+    with allure.step("Authenticate test session token"):
+        response = httpx.post(
+            f"{configs.app_base_url}/api/login",
+            json={"api_token": configs.testomat_token},
+            timeout=30,
+        )
+        response.raise_for_status()
+        return response.json()["jwt"]
 
 
 @pytest.fixture(scope="session")
@@ -214,15 +216,18 @@ def user_project_api(configs: Config, auth_token: str) -> UserProjectApi:
 @pytest.fixture(scope="function")
 def project(project_api: ProjectApi) -> Project:
     """Get the first available project as a precondition."""
-    projects = project_api.get_all()
-    return projects[0]
+    with allure.step("Get first available project"):
+        projects = project_api.get_all()
+        return projects[0]
 
 
 @pytest.fixture(scope="function")
 def created_suite(project: Project, suite_api: SuiteApi) -> Suite:
-    created = suite_api.create(project_id=project.id, title=fake.sentence())
+    with allure.step("Create suite fixture"):
+        created = suite_api.create(project_id=project.id, title=fake.sentence())
     yield created
-    suite_api.delete(project.id, created.id)
+    with allure.step("Delete suite fixture"):
+        suite_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
@@ -231,56 +236,64 @@ def created_test(
     created_suite: Suite,
     test_api: CaseClient,
 ) -> CaseModel:
-    tag = f"plan_{fake.word()}"
-    test_case = test_api.create(
-        project_id=project.id,
-        suite_id=created_suite.id,
-        title=fake.sentence(),
-        tags=[tag],
-    )
+    with allure.step("Create test case fixture"):
+        tag = f"plan_{fake.word()}"
+        test_case = test_api.create(
+            project_id=project.id,
+            suite_id=created_suite.id,
+            title=fake.sentence(),
+            tags=[tag],
+        )
     yield test_case
-    test_api.delete(project.id, test_case.id)
+    with allure.step("Delete test case fixture"):
+        test_api.delete(project.id, test_case.id)
 
 
 @pytest.fixture(scope="function")
 def created_step(project: Project, step_api: StepApi) -> Step:
-    payload = {"data": {"type": "steps", "attributes": {"title": fake.sentence()}}}
-    created = step_api.create(project.id, payload).data
+    with allure.step("Create step fixture"):
+        payload = {"data": {"type": "steps", "attributes": {"title": fake.sentence()}}}
+        created = step_api.create(project.id, payload).data
     yield created
-    step_api.delete(project.id, created.id)
+    with allure.step("Delete step fixture"):
+        step_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
 def created_rungroup(project: Project, rungroup_api: RunGroupApi) -> RunGroup:
-    payload = {
-        "data": {
-            "type": "rungroups",
-            "attributes": {
-                "title": fake.sentence(),
-                "kind": "build",
-                "merge_strategy": "realistic",
-            },
+    with allure.step("Create run group fixture"):
+        payload = {
+            "data": {
+                "type": "rungroups",
+                "attributes": {
+                    "title": fake.sentence(),
+                    "kind": "build",
+                    "merge_strategy": "realistic",
+                },
+            }
         }
-    }
-    created = rungroup_api.create(project.id, payload).data
+        created = rungroup_api.create(project.id, payload).data
     yield created
-    rungroup_api.delete(project.id, created.id)
+    with allure.step("Delete run group fixture"):
+        rungroup_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
 def created_run(project: Project, created_rungroup: RunGroup, run_api: RunApi) -> Run:
-    payload = {
-        "data": {
-            "type": "runs",
-            "attributes": {
-                "title": fake.sentence(),
-                "rungroup_id": created_rungroup.id,
-            },
+    with allure.step("Create run fixture"):
+        payload = {
+            "data": {
+                "type": "runs",
+                "attributes": {
+                    "title": fake.sentence(),
+                    "rungroup_id": created_rungroup.id,
+                },
+            }
         }
-    }
-    created = run_api.create(project.id, payload).data
+        created = run_api.create(project.id, payload).data
     yield created
-    run_api.delete(project.id, created.id)
+    with allure.step("Delete run fixture"):
+        run_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
@@ -290,50 +303,56 @@ def created_testrun(
     created_test: CaseModel,
     testrun_api: TestRunApi,
 ) -> TestRun:
-    payload = {
-        "data": {
-            "type": "testruns",
-            "attributes": {
-                "run_id": created_run.id,
-                "test_id": created_test.id,
-                "status": "passed",
-            },
+    with allure.step("Create test run fixture"):
+        payload = {
+            "data": {
+                "type": "testruns",
+                "attributes": {
+                    "run_id": created_run.id,
+                    "test_id": created_test.id,
+                    "status": "passed",
+                },
+            }
         }
-    }
-    created = testrun_api.create(project.id, payload).data
+        created = testrun_api.create(project.id, payload).data
     yield created
-    testrun_api.delete(project.id, created.id)
+    with allure.step("Delete test run fixture"):
+        testrun_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
 def created_template(project: Project, template_api: TemplateApi) -> Template:
-    payload = {
-        "data": {
-            "type": "templates",
-            "attributes": {
-                "title": fake.sentence(),
-                "kind": "test",
-                "body": "### Steps",
-            },
+    with allure.step("Create template fixture"):
+        payload = {
+            "data": {
+                "type": "templates",
+                "attributes": {
+                    "title": fake.sentence(),
+                    "kind": "test",
+                    "body": "### Steps",
+                },
+            }
         }
-    }
-    created = template_api.create(project.id, payload).data
+        created = template_api.create(project.id, payload).data
     yield created
-    template_api.delete(project.id, created.id)
+    with allure.step("Delete template fixture"):
+        template_api.delete(project.id, created.id)
 
 
 @pytest.fixture(scope="function")
 def created_plan(project: Project, created_suite: Suite, plan_api: PlanApi) -> Plan:
-    payload = {
-        "data": {
-            "type": "plans",
-            "attributes": {
-                "title": fake.sentence(),
-                "kind": "manual",
-                "test-plan": {"suites": [created_suite.id]},
-            },
+    with allure.step("Create plan fixture"):
+        payload = {
+            "data": {
+                "type": "plans",
+                "attributes": {
+                    "title": fake.sentence(),
+                    "kind": "manual",
+                    "test-plan": {"suites": [created_suite.id]},
+                },
+            }
         }
-    }
-    created = plan_api.create(project.id, payload=payload).data
+        created = plan_api.create(project.id, payload=payload).data
     yield created
-    plan_api.delete(project.id, created.id)
+    with allure.step("Delete plan fixture"):
+        plan_api.delete(project.id, created.id)

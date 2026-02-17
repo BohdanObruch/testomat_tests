@@ -1,0 +1,71 @@
+name: Playwright UI Tests
+
+permissions:
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: false
+        default: all
+        type: string
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Test suite to run'
+        required: true
+        default: smoke
+        type: choice
+        options:
+          - smoke
+          - regression
+          - all
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [ smoke, regression ]
+    if: >
+      inputs.test_suite == 'all' ||
+      inputs.test_suite == matrix.suite
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+        with:
+          install-playwright: 'true'
+
+      - name: Run ${{ matrix.suite }} Playwright tests
+        env:
+          CI: true
+          BASE_URL: ${{ secrets.BASE_URL }}
+          BASE_APP_URL: ${{ secrets.BASE_APP_URL }}
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          TESTOMAT_TOKEN: ${{ secrets.TESTOMAT_TOKEN }}
+        run: uv run pytest tests/web -m "${{ matrix.suite }} and not selenium" -n 3 --dist=loadscope
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-${{ matrix.suite }}-allure-results
+          path: test-result/allure-results/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-${{ matrix.suite }}-traces
+          path: test-result/traces/
+          if-no-files-found: ignore
+          retention-days: 14

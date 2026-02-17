@@ -1,5 +1,6 @@
 from typing import Self
 
+import allure
 from playwright.sync_api import Page, expect
 
 from src.web.components import AddTestMenu, NavigationTabs, NewSuite, SideBar, Suite, TestModal
@@ -37,10 +38,12 @@ class ProjectPage:
         self.delete_project_button = self.page.get_by_role("button", name="Delete Project")
         self.deletion_warning = self.page.locator(".warning").filter(has_text="Project will be deleted in few minutes")
 
+    @allure.step("Open project with id: {project_id}")
     def open_by_id(self, project_id: str) -> Self:
         self.page.goto(f"/projects/{project_id}")
         return self
 
+    @allure.step("Verify empty project is loaded")
     def is_loaded_empty_project(self) -> Self:
         expect(self.header).to_be_visible(timeout=10_000)
         expect(self.navigation_menu).to_be_visible()
@@ -48,41 +51,51 @@ class ProjectPage:
         expect(self.create_suite_button).to_be_visible()
         return self
 
+    @allure.step("Verify project is loaded")
     def is_loaded_project(self) -> Self:
         expect(self.header).to_be_visible(timeout=10_000)
         expect(self.navigation_menu).to_be_visible()
         expect(self.add_test_button).to_be_visible()
         return self
 
+    @allure.step("Verify project name is: {expected_project_name}")
     def empty_project_name_is(self, expected_project_name: str) -> Self:
         expect(self.empty_project_name).to_have_text(expected_project_name)
         return self
 
+    @allure.step("Verify breadcrumb project name is: {expected_project_name}")
     def project_name_is(self, expected_project_name: str) -> Self:
         expect(self.project_name).to_have_text(expected_project_name.capitalize())
         return self
 
+    @allure.step("Close read me panel")
     def close_read_me(self) -> Self:
         self.readme_close_button.click()
+        return self
 
+    @allure.step("Click add test button")
     def click_add_test(self) -> Self:
         self.add_test_button.click()
         return self
 
+    @allure.step("Open add test dropdown")
     def open_add_test_dropdown(self) -> Self:
         self.add_test_dropdown.click()
         return self
 
+    @allure.step("Verify suite is present: {suite_name}")
     def verify_suite_is_present(self, suite_name: str) -> Self:
         all_suites = self.suite_name.all_inner_texts()
         assert suite_name in all_suites, f"Suite '{suite_name}' not found in project."
         return self
 
+    @allure.step("Open project settings")
     def go_to_settings(self) -> Self:
         self.settings_link.click()
         expect(self.project_menu_settings).to_be_visible()
         return self
 
+    @allure.step("Delete project")
     def delete_project(self) -> Self:
         self.administration_button.click()
         self.page.on("dialog", lambda dialog: dialog.accept())
@@ -92,21 +105,26 @@ class ProjectPage:
         self.page.on("dialog", lambda dialog: dialog.accept())
         return self
 
+    @allure.step("Verify project deletion started")
     def verify_project_deletion_started(self) -> Self:
         expect(self.deletion_warning).to_be_visible()
         return self
 
+    @allure.step("Create test suite via popup")
     def create_test_suite_via_popup(self):
         self.page.locator(".md-icon-chevron-down").click()
         self.page.get_by_text("Collection of test cases").click()
 
+    @allure.step("Verify suite with name is visible: {test_suite_name}")
     def suite_with_name_is_visible(self, test_suite_name: str):
         expect(self.page.locator(".suites-list-content").get_by_text(test_suite_name)).to_be_visible()
 
+    @allure.step("Create test via popup")
     def create_test_via_popup(self):
         self.page.locator(".sticky-header").get_by_role("button", name="Test  ", exact=True).click()
         return self
 
+    @allure.step("Create first suite: {target_suite_name}")
     def create_first_suite(self, target_suite_name: str):
         self.page.locator("[placeholder='First Suite']").fill(target_suite_name)
         suite_button = self.page.get_by_role("button", name="Suite")

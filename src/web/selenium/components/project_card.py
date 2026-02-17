@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -27,11 +28,13 @@ class ProjectCard:
     def href(self) -> str:
         return self._link.get_attribute("href")
 
+    @allure.step("Verify project card has badge: {expected_badge}")
     def badges_has(self, expected_badge: Badges):
         assert expected_badge.value in self._badges.text, (
             f"Expected badge '{expected_badge.value}' not found in '{self._badges.text}'."
         )
 
+    @allure.step("Open project card")
     def click(self):
         self._link.click()
 

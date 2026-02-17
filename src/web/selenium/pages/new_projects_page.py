@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -24,10 +25,12 @@ class NewProjectsPage(BasePage):
             return path
         return f"{self.base_url}{path}"
 
+    @allure.step("Open new project page")
     def open(self):
         self.driver.get(self._url("/projects/new"))
         return self
 
+    @allure.step("Verify new project page is loaded")
     def is_loaded(self):
         self.wait.for_visible(self.FORM_CONTAINER)
         self.wait.for_visible(self.CLASSICAL_MODE)
@@ -37,19 +40,23 @@ class NewProjectsPage(BasePage):
         self.wait.for_visible(self.CREATE_BUTTON)
         return self
 
+    @allure.step("Fill project title: {target_project_name}")
     def fill_project_title(self, target_project_name: str):
         self.type_text(self.PROJECT_TITLE, target_project_name)
         return self
 
+    @allure.step("Click create project")
     def click_create(self) -> ProjectPage:
         self.click(self.CREATE_BUTTON)
         self.wait.for_invisible(self.CREATE_BUTTON)
         return ProjectPage(self.driver, self.base_url)
 
+    @allure.step("Select project mode: {mode}")
     def select_mode(self, mode: str):
         self.click((By.CSS_SELECTOR, f"#{mode}"))
         return self
 
+    @allure.step("Verify project mode selected: {mode}")
     def expect_mode_selected(self, mode: str):
         button = self.find((By.CSS_SELECTOR, f"#{mode}"))
         icon = self.find((By.CSS_SELECTOR, f"#{mode}-img"))

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -19,19 +20,23 @@ class TestModal(BasePage):
             f"//h3[contains(normalize-space(), '{artifact_type}')]",
         )
 
+    @allure.step("Verify test modal is loaded for: {artifact_type}")
     def is_loaded(self, artifact_type: str):
         self.wait.for_visible(self._heading(f"New {artifact_type}"))
         self.wait.for_visible(self.TITLE_INPUT, custom_timeout=15)
         return self
 
+    @allure.step("Set modal title: {title}")
     def set_title(self, title: str):
         self.type_text(self.TITLE_INPUT, title)
         return self
 
+    @allure.step("Save modal")
     def save(self):
         self.click(self.SAVE_BUTTON)
         return self
 
+    @allure.step("Verify edit modal is visible for: {artifact_type}")
     def edit_is_visible(self, artifact_type: str):
         self.wait.for_visible(self._heading(f"Edit {artifact_type}"))
         return self

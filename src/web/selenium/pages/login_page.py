@@ -1,5 +1,6 @@
 from typing import Self
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -18,15 +19,18 @@ class LoginPage(BasePage):
     def __init__(self, driver: WebDriver):
         super().__init__(driver)
 
+    @allure.step("Open login page")
     def open(self, base_url: str = "") -> Self:
         self.driver.get(f"{base_url}/users/sign_in")
         return self
 
+    @allure.step("Verify login page is loaded")
     def is_loaded(self) -> Self:
         self.wait.for_visible(self.EMAIL_INPUT)
         self.wait.for_visible(self.PASSWORD_INPUT)
         return self
 
+    @allure.step("Enable remember me")
     def check_remember_me(self) -> Self:
         checkbox = self.find(self.REMEMBER_ME_CHECKBOX)
         if not checkbox.is_selected():
@@ -34,19 +38,26 @@ class LoginPage(BasePage):
         return self
 
     def login(self, email: str, password: str, remember_me: bool = False) -> Self:
-        self.type_text(self.EMAIL_INPUT, email)
-        self.type_text(self.PASSWORD_INPUT, password)
+        with allure.step("Login user with credentials"):
+            allure.dynamic.parameter("email", "env.EMAIL")
+            allure.dynamic.parameter("password", "env.PASSWORD")
+            allure.dynamic.parameter("remember_me", remember_me)
 
-        if remember_me:
-            self.check_remember_me()
+            self.type_text(self.EMAIL_INPUT, email)
+            self.type_text(self.PASSWORD_INPUT, password)
 
-        self.click(self.SIGN_IN_BUTTON)
+            if remember_me:
+                self.check_remember_me()
+
+            self.click(self.SIGN_IN_BUTTON)
         return self
 
+    @allure.step("Verify success message is visible")
     def should_see_success_message(self) -> Self:
         self.wait.for_visible(self.SUCCESS_MESSAGE)
         return self
 
+    @allure.step("Verify invalid login error is visible")
     def should_see_invalid_login_error(self) -> Self:
         self.wait.for_visible(self.INVALID_LOGIN_TEXT)
         return self

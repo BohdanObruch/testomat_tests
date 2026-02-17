@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -12,6 +13,7 @@ class Suite(NewSuite):
     def __init__(self, driver: WebDriver):
         super().__init__(driver)
 
+    @allure.step("Verify suite panel is loaded")
     def is_loaded(self):
         self.wait.for_visible(self.PANEL)
         self.wait.for_visible(self.HEADER)
@@ -20,11 +22,13 @@ class Suite(NewSuite):
         self.wait.for_visible(self.TITLE_INPUT)
         return self
 
+    @allure.step("Verify suite name is: {expected_name}")
     def suite_name_is(self, expected_name: str):
         actual = self.get_text(self.SUITE_NAME).strip()
         assert actual == expected_name
         return self
 
+    @allure.step("Verify active suite tab is: {tab_name}")
     def tab_name_is_active(self, tab_name: str):
         tab = self.find((By.XPATH, f"//li[@role='tab' and .//text()[normalize-space()='{tab_name}']]"))
         class_name = tab.get_attribute("class") or ""

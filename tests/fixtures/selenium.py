@@ -6,12 +6,21 @@ from selenium.webdriver.chrome.options import Options
 from src.web.selenium.application import SeleniumApplication
 
 
+def _is_headed_enabled(config: pytest.Config) -> bool:
+    try:
+        return bool(config.getoption("headed"))
+    except Exception:
+        return False
+
+
 @pytest.fixture(scope="function")
-def driver():
+def driver(request: pytest.FixtureRequest):
     options = Options()
-    headless = True
+    headless = not _is_headed_enabled(request.config)
     if headless:
         options.add_argument("--headless=new")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
     driver = webdriver.Chrome(options=options)
     driver.implicitly_wait(0)
     driver.set_window_size(1920, 1080)

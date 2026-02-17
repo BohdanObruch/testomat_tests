@@ -8,6 +8,7 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import allure
 import pytest
 from faker import Faker
 from playwright.sync_api import Browser, BrowserContext, Page, ViewportSize, sync_playwright
@@ -67,6 +68,16 @@ def _option_enabled(
     return False
 
 
+def _is_ci() -> bool:
+    return _normalized_option(os.getenv("CI")) in {"1", "true", "yes", "on"}
+
+
+def _is_headed_enabled(config: pytest.Config) -> bool:
+    with contextlib.suppress(Exception):
+        return bool(config.getoption("headed"))
+    return False
+
+
 def _should_take_screenshot(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
     return _option_enabled(
         settings.screenshot,
@@ -95,11 +106,44 @@ def _browser_name_from_context(context: BrowserContext) -> str:
 def _capture_screenshot(page: Page, request: pytest.FixtureRequest, settings: PlaywrightSettings) -> None:
     if not _should_take_screenshot(settings, request):
         return
-    settings.screenshot_dir.mkdir(parents=True, exist_ok=True)
-    browser_name = _browser_name_from_context(page.context)
-    path = settings.screenshot_dir / f"{_artifact_basename(request, browser_name)}.png"
+    screenshot_bytes: bytes | None = None
     with contextlib.suppress(Exception):
-        page.screenshot(path=str(path), full_page=True)
+        screenshot_bytes = page.screenshot(full_page=True)
+    if screenshot_bytes is None:
+        return
+    browser_name = _browser_name_from_context(page.context)
+    artifact_name = _artifact_basename(request, browser_name)
+    allure.attach(
+        screenshot_bytes,
+        name=artifact_name,
+        attachment_type=allure.attachment_type.PNG,
+    )
+    settings.screenshot_dir.mkdir(parents=True, exist_ok=True)
+    path = settings.screenshot_dir / f"{artifact_name}.png"
+    with contextlib.suppress(Exception):
+        path.write_bytes(screenshot_bytes)
+
+
+def _attach_trace(path: Path, request: pytest.FixtureRequest, browser_name: str) -> None:
+    if not path.exists():
+        return
+    allure.attach.file(
+        str(path),
+        name=_artifact_basename(request, browser_name),
+        extension="zip",
+        attachment_type="application/vnd.allure.playwright-trace",
+    )
+
+
+def _attach_video(path: Path, request: pytest.FixtureRequest, browser_name: str) -> None:
+    if not path.exists():
+        return
+    allure.attach.file(
+        str(path),
+        name=_artifact_basename(request, browser_name),
+        extension="webm",
+        attachment_type="video/webm",
+    )
 
 
 def _finalize_page(page: Page, request: pytest.FixtureRequest, settings: PlaywrightSettings) -> None:
@@ -154,12 +198,15 @@ def _cleanup_video(
     settings.video_dir.mkdir(parents=True, exist_ok=True)
     target = settings.video_dir / f"{_artifact_basename(request, browser_name)}.webm"
     if target == path:
+        _attach_video(target, request, browser_name)
         return
     if _save_video(video, target):
         with contextlib.suppress(Exception):
             os.remove(path)
+        _attach_video(target, request, browser_name)
         return
     _retry_on_permission(lambda: os.replace(path, target))
+    _attach_video(target, request, browser_name)
 
 
 def _should_trace(settings: PlaywrightSettings, request: pytest.FixtureRequest) -> bool:
@@ -193,6 +240,7 @@ def _stop_tracing(
     browser_name = _browser_name_from_context(context)
     path = settings.trace_dir / f"{_artifact_basename(request, browser_name)}.zip"
     context.tracing.stop(path=str(path))
+    _attach_trace(path, request, browser_name)
 
 
 def build_browser_context(
@@ -213,16 +261,16 @@ def build_browser_context(
     }
     if storage_state is not None and storage_state.exists():
         context_kwargs["storage_state"] = str(storage_state)
-    if enable_video and _normalized_option(settings.video) in {"on", "retain-on-failure"}:
+    if enable_video and not _is_ci() and _normalized_option(settings.video) in {"on", "retain-on-failure"}:
         settings.video_dir.mkdir(parents=True, exist_ok=True)
         context_kwargs["record_video_dir"] = str(settings.video_dir)
     return browser_instance.new_context(**context_kwargs)
 
 
 @pytest.fixture(scope="session")
-def browser_instance() -> Generator[Browser]:
+def browser_instance(request: pytest.FixtureRequest) -> Generator[Browser]:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, slow_mo=0, timeout=30000)
+        browser = p.chromium.launch(headless=not _is_headed_enabled(request.config), slow_mo=0, timeout=30000)
         yield browser
         browser.close()
 

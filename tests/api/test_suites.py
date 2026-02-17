@@ -1,3 +1,4 @@
+import allure
 import pytest
 from faker import Faker
 
@@ -10,13 +11,15 @@ fake = Faker()
 @pytest.mark.api
 class TestSuites:
     def test_list_suites(self, project: Project, suite_api: SuiteApi):
-        suites = suite_api.list(project.id)
-        assert isinstance(suites, list)
+        with allure.step("List suites for project"):
+            suites = suite_api.list(project.id)
+            assert isinstance(suites, list)
 
     def test_update_suite(self, project: Project, suite_api: SuiteApi, created_suite: Suite):
-        updated = suite_api.update(
-            project_id=project.id,
-            suite_id=created_suite.id,
-            title=fake.sentence(),
-        )
-        assert updated.id == created_suite.id
+        with allure.step("Update suite title"):
+            updated = suite_api.update(
+                project_id=project.id,
+                suite_id=created_suite.id,
+                title=fake.sentence(),
+            )
+            assert updated.id == created_suite.id
