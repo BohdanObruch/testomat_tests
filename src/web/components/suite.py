@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import allure
 from playwright.sync_api import Page, expect
 
 from src.web.components import NewSuite
@@ -62,6 +63,7 @@ class Suite(NewSuite):
         )
         self._bulk_toggle = self._content.get_by_role("switch")
 
+    @allure.step("Verify suite panel is loaded")
     def is_loaded(self) -> Suite:
         expect(self._panel).to_be_visible()
         expect(self._header).to_be_visible()
@@ -71,82 +73,102 @@ class Suite(NewSuite):
         expect(self._editor).to_be_visible()
         return self
 
+    @allure.step("Verify suite name is: {expected_name}")
     def suite_name_is(self, expected_name: str) -> Suite:
         expect(self._suite_name).to_have_text(expected_name)
         return self
 
+    @allure.step("Verify suite breadcrumbs has: {expected_text}")
     def breadcrumbs_has(self, expected_text: str) -> Suite:
         expect(self._suite_id_link).to_have_text(expected_text)
         return self
 
+    @allure.step("Copy suite id")
     def click_copy_id(self) -> Suite:
         self._copy_id_button.click()
         return self
 
+    @allure.step("Open emoji picker")
     def click_pick_emoji(self) -> Suite:
         self._pick_emoji_button.click()
         return self
 
+    @allure.step("Click new test in suite")
     def click_new_test(self) -> Suite:
         self._new_test_link.click()
         return self
 
+    @allure.step("Click edit suite")
     def click_edit(self) -> Suite:
         self._edit_link.click()
         return self
 
+    @allure.step("Open suite comments")
     def click_comments(self) -> Suite:
         self._comments_link.click()
         return self
 
+    @allure.step("Open suite header more actions")
     def open_header_more_actions(self) -> Suite:
         self._header_more_actions_trigger.click()
         return self
 
+    @allure.step("Convert suite to folder")
     def click_convert_to_folder(self) -> Suite:
         self._convert_to_folder_link.click()
         return self
 
+    @allure.step("Open assign dropdown")
     def open_assign_dropdown(self) -> Suite:
         self._assign_dropdown.click()
         return self
 
+    @allure.step("Click attach requirements")
     def click_attach_requirements(self) -> Suite:
         self._attach_requirements_link.click()
         return self
 
+    @allure.step("Open Description tab")
     def open_description_tab(self) -> Suite:
         self._description_tab.click()
         return self
 
+    @allure.step("Open Tests tab")
     def open_tests_tab(self) -> Suite:
         self._tests_tab.click()
         return self
 
+    @allure.step("Verify active suite tab is: {tab_name}")
     def tab_name_is_active(self, tab_name: str) -> Suite:
         expect(self.page.get_by_role("tab", name=tab_name)).to_contain_class("ember-tabs__tab--selected")
         return self
 
+    @allure.step("Open Attachments tab")
     def open_attachments_tab(self) -> Suite:
         self._attachments_tab.click()
         return self
 
+    @allure.step("Click suggest tests")
     def click_suggest_tests(self) -> Suite:
         self._suggest_tests_button.click()
         return self
 
+    @allure.step("Open suggest tests menu")
     def open_suggest_tests_menu(self) -> Suite:
         self._suggest_tests_menu_button.click()
         return self
 
+    @allure.step("Fill new test title: {title}")
     def fill_new_test_title(self, title: str) -> Suite:
         self._add_test_input.fill(title)
         return self
 
+    @allure.step("Create new test")
     def click_create_test(self) -> Suite:
         self._create_test_button.click()
         return self
 
+    @allure.step("Toggle bulk mode")
     def toggle_bulk(self) -> Suite:
         self._bulk_toggle.click()
         return self

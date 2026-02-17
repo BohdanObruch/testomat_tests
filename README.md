@@ -125,7 +125,7 @@ testomat_tests/
 |   |-- report.html               # HTML report (pytest-html)
 |   |-- screenshots/              # Screenshots on failure
 |   |-- traces/                   # Playwright traces
-|   |-- videos/                   # Video recordings
+|   |-- videos/                   # Video recordings (local runs only)
 |   `-- .auth/                    # Auth state storage
 |
 |-- .env                          # Environment configuration
@@ -195,6 +195,9 @@ pytest -m api
 # Run Selenium tests
 pytest -m selenium
 
+# Run tests in headed mode (Playwright + Selenium)
+pytest --headed
+
 # Run specific test file
 pytest tests/web/login_page_test.py
 
@@ -207,6 +210,54 @@ pytest --html=test-result/report.html
 # Override Playwright artifacts (defaults are set in pyproject.toml)
 pytest --tracing=on --screenshot=on --video=on
 ```
+
+## CI (GitHub Actions)
+
+The project uses reusable GitHub Actions workflows for API/UI test execution and a parent workflow that publishes a
+unified Allure report.
+
+### Workflows
+
+- `.github/workflows/all_tests_report.yml`:
+    - Triggers:
+        - `pull_request` to `main`
+        - `schedule` (`0 8 * * 1-5`)
+        - `workflow_dispatch` with `test_suite` (`smoke`, `regression`, `all`)
+    - Runs:
+        - Ruff checks on PRs
+        - Playwright, API, and Selenium reusable workflows
+        - Unified Allure report publication to GitHub Pages
+
+- `.github/workflows/playwright_ui_tests.yml`
+- `.github/workflows/api_tests.yml`
+- `.github/workflows/selenium_tests.yml`
+    - Triggered via `workflow_call` (from parent workflow) or manual `workflow_dispatch`
+    - Support `test_suite` input: `smoke`, `regression`, `all`
+    - Use a matrix (`smoke`, `regression`) and skip non-selected suites inside run steps
+    - Upload Allure artifacts for each suite
+
+### Important Trigger Note
+
+Regular `push` does not start the main CI pipeline by default.
+Use one of the following:
+
+- open/update a PR to `main`
+- run `All Tests And Unified Report` manually (`workflow_dispatch`)
+- rely on scheduled weekday run
+
+## Allure Artifacts
+
+Playwright fixtures (`tests/fixtures/playwright.py`) attach artifacts directly to Allure:
+
+- Trace: attached as `.zip` with `application/vnd.allure.playwright-trace`
+- Screenshot: attached as PNG
+- Video: attached as `.webm`
+
+Notes:
+
+- Videos are created only on local runs.
+- On CI (`CI=true/1/...`), video recording is disabled, so video files/attachments are not produced.
+- Traces and screenshots still work according to your pytest options.
 
 ## Test Markers
 
@@ -319,14 +370,16 @@ ruff format .
 
 ## Browser Configuration
 
-Default browser settings (configured in `tests/fixtures/playwright.py`):
+Default browser settings (configured in `tests/fixtures/playwright.py` and `tests/fixtures/selenium.py`):
 
 - Resolution: 1920x1080
 - Locale: uk-UA
 - Timezone: Europe/Kyiv
 - Permissions: geolocation
-- Headless: True
-- Video recording: retain on failure (default in `pyproject.toml`)
+- Headless: True by default
+- Headed mode: pass `--headed` (works for both Playwright and Selenium)
+- Video recording: retain on failure for local runs (default in `pyproject.toml`)
+- Video on CI: disabled
 - Screenshots: only on failure (default in `pyproject.toml`)
 - Tracing: retain on failure (default in `pyproject.toml`)
 

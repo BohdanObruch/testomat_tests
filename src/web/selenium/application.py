@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import allure
 from selenium.webdriver.remote.webdriver import WebDriver
 
 from src.web.selenium.pages import LoginPage, NewProjectsPage, ProjectPage, ProjectsPage
@@ -15,5 +16,8 @@ class SeleniumApplication:
         self.project_page = ProjectPage(driver, self.base_url)
 
     def login(self, email: str, password: str):
-        self.login_page.open(self.base_url).is_loaded().login(email, password).should_see_success_message()
+        with allure.step("Login via Selenium application"):
+            allure.dynamic.parameter("email", "env.EMAIL")
+            allure.dynamic.parameter("password", "env.PASSWORD")
+            self.login_page.open(self.base_url).is_loaded().login(email, password).should_see_success_message()
         return self

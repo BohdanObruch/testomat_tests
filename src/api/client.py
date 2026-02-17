@@ -1,3 +1,4 @@
+import allure
 import httpx
 
 from src.api.models.project import ProjectsResponse
@@ -17,22 +18,24 @@ class ApiClient:
         if self._jwt_token:
             return self._jwt_token
 
-        response = self._client.post(
-            self._url("/api/login"),
-            json={"api_token": self.api_token},
-        )
-        response.raise_for_status()
-        self._jwt_token = response.json()["jwt"]
-        return self._jwt_token
+        with allure.step("Authenticate ApiClient"):
+            response = self._client.post(
+                self._url("/api/login"),
+                json={"api_token": self.api_token},
+            )
+            response.raise_for_status()
+            self._jwt_token = response.json()["jwt"]
+            return self._jwt_token
 
     def _get_auth_headers(self) -> dict[str, str]:
         jwt = self._authenticate()
         return {"Authorization": f"Bearer {jwt}"}
 
     def get_projects(self) -> ProjectsResponse:
-        response = self._client.get(
-            self._url("/api/projects"),
-            headers=self._get_auth_headers(),
-        )
-        response.raise_for_status()
-        return ProjectsResponse.model_validate(response.json())
+        with allure.step("GET /api/projects"):
+            response = self._client.get(
+                self._url("/api/projects"),
+                headers=self._get_auth_headers(),
+            )
+            response.raise_for_status()
+            return ProjectsResponse.model_validate(response.json())

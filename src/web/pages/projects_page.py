@@ -1,3 +1,4 @@
+import allure
 from playwright.sync_api import Page, expect
 
 from src.web.components import ProjectCard, ProjectsHeader
@@ -19,61 +20,78 @@ class ProjectsPage:
 
         self.total_count = page.locator(".common-counter")
 
+    @allure.step("Navigate to projects page: {url}")
     def navigate(self, url: str = "/projects"):
         self.page.goto(url)
 
+    @allure.step("Get success message text")
     def get_success_message(self) -> str:
         return self.success_message.text_content().strip()
 
+    @allure.step("Get all project cards")
     def get_projects(self) -> list[ProjectCard]:
         return [ProjectCard(card) for card in self._project_cards.all()]
 
+    @allure.step("Get project card by title: {title}")
     def get_project_by_title(self, title: str) -> ProjectCard:
         card = self._project_cards.filter(has=self.page.locator("h3", has_text=title)).first
         return ProjectCard(card)
 
+    @allure.step("Open project by title: {title}")
     def click_project_by_title(self, title: str):
         card = self._project_cards.filter(has=self.page.locator("h3", has_text=title)).first
         card.click()
         return self
 
+    @allure.step("Verify visible project count is: {expected_count}")
     def count_of_project_visible(self, expected_count: int):
         return expect(self._project_cards.filter(visible=True)).to_have_count(expected_count)
 
+    @allure.step("Get total projects count")
     def get_total_projects(self) -> int:
         return int(self.total_count.text_content())
 
+    @allure.step("Search projects with query: {query}")
     def search_and_get_results(self, query: str) -> list[ProjectCard]:
         self.header.search_project(query)
         self.page.wait_for_timeout(300)
         return self.get_projects()
 
+    @allure.step("Verify projects page is loaded")
     def verify_page_loaded(self):
         expect(self.header.page_title).to_be_visible()
         expect(self.projects_grid).to_be_visible()
 
+    @allure.step("Verify success message is: {expected_text}")
     def verify_success_message(self, expected_text: str):
         expect(self.success_message).to_have_text(expected_text)
 
+    @allure.step("Verify project heading is hidden: {title}")
     def expect_project_heading_hidden(self, title: str):
         expect(self.page.get_by_role("heading", name=title)).to_be_hidden()
 
+    @allure.step("Verify no projects message is visible")
     def expect_no_projects_message(self):
         expect(self.empty_projects_message).to_be_visible()
 
+    @allure.step("Verify info message is: {expected_text}")
     def expect_info_message(self, expected_text: str):
         expect(self.info_message).to_have_text(expected_text)
 
+    @allure.step("Verify tooltip message is: {expected_text}")
     def expect_tooltip_message(self, expected_text: str):
         expect(self.page.get_by_text(expected_text)).to_be_visible()
 
+    @allure.step("Verify table view is active")
     def expect_table_view_active(self):
         expect(self.table).to_be_visible()
         expect(self.header.table_view_button).to_contain_class("active_list_type")
 
+    @allure.step("Open new project page from header")
     def open_new_project_from_header(self):
         self.new_project_link.click()
 
+    @allure.step("Verify projects page login success flash is visible")
     def is_loaded(self):
         expect(self.page.locator(".common-flash-success")).to_be_visible()
         expect(self.page.locator(".common-flash-success")).to_have_text("Signed in successfully")

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+import allure
 from playwright.sync_api import Page, expect
 
 
@@ -33,6 +34,7 @@ class AddTestMenu:
             has_text="Use AI to generate tests from the requirement",
         )
 
+    @allure.step("Verify add test menu is loaded")
     def is_loaded(self) -> AddTestMenu:
         expect(self._menu).to_be_visible()
         expect(self._folder_button).to_be_visible()
@@ -40,20 +42,24 @@ class AddTestMenu:
         expect(self._requirements_button).to_be_visible()
         return self
 
+    @allure.step("Verify add test menu descriptions")
     def expect_descriptions(self) -> AddTestMenu:
         expect(self._folder_description).to_be_visible()
         expect(self._suite_description).to_be_visible()
         expect(self._requirements_description).to_be_visible()
         return self
 
+    @allure.step("Click add folder")
     def click_folder(self) -> AddTestMenu:
         self._folder_button.click()
         return self
 
+    @allure.step("Click add suite")
     def click_suite(self) -> AddTestMenu:
         self._suite_button.click()
         return self
 
+    @allure.step("Click tests from requirement")
     def click_tests_from_requirement(self) -> AddTestMenu:
         self._requirements_button.click()
         return self

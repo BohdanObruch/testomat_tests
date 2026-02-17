@@ -1,5 +1,6 @@
 from typing import Self
 
+import allure
 from playwright.sync_api import Page, expect
 
 from .project_page import ProjectPage
@@ -16,10 +17,12 @@ class NewProjectsPage:
     def _mode_icon(self, mode: str):
         return self.__form_container.locator(f"#{mode}-img")
 
+    @allure.step("Open new project page")
     def open(self) -> Self:
         self.page.goto("/projects/new")
         return self
 
+    @allure.step("Verify new project page is loaded")
     def is_loaded(self) -> Self:
         expect(self.__form_container).to_be_visible()
         expect(self.__form_container.locator("#classical")).to_be_visible()
@@ -33,19 +36,23 @@ class NewProjectsPage:
         expect(self.page.get_by_text("New Project")).to_be_visible()
         return self
 
+    @allure.step("Fill project title: {target_project_name}")
     def fill_project_title(self, target_project_name: str) -> Self:
         self.__form_container.locator("#project_title").fill(target_project_name)
         return self
 
+    @allure.step("Click create project")
     def click_create(self) -> ProjectPage:
         self.__form_container.locator("#project-create-btn input").click()
         expect(self.__form_container.locator("#project-create-btn input")).to_be_hidden(timeout=10_000)
         return ProjectPage(self.page)
 
+    @allure.step("Select project mode: {mode}")
     def select_mode(self, mode: str) -> Self:
         self._mode_button(mode).click()
         return self
 
+    @allure.step("Verify project mode selected: {mode}")
     def expect_mode_selected(self, mode: str) -> Self:
         expect(self._mode_button(mode)).to_have_css("border-color", "rgb(79, 70, 229)")
         expect(self._mode_icon(mode)).to_have_attribute("src", "/images/projects/circle-tick-dark-mode.svg")

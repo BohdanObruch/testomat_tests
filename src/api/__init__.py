@@ -48,8 +48,8 @@ from src.api.models import (
 )
 
 __all__ = [
-    "ApiClient",
     "AnalyticsApi",
+    "ApiClient",
     "AttachmentApi",
     "BaseController",
     "CaseClient",

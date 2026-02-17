@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -23,36 +24,44 @@ class NavigationTabs(BasePage):
     def __init__(self, driver: WebDriver):
         super().__init__(driver)
 
+    @allure.step("Verify navigation tabs are loaded")
     def is_loaded(self):
         self.wait.for_visible(self.TABS_NAV)
         self.wait.for_visible(self.MANUAL_TAB)
         self.wait.for_visible(self.AUTOMATED_TAB)
         return self
 
+    @allure.step("Click select all tab items")
     def click_select_all(self):
         self.click(self.SELECT_ALL_BUTTON)
         return self
 
+    @allure.step("Open Manual tab")
     def click_manual(self):
         self.click(self.MANUAL_TAB)
         return self
 
+    @allure.step("Open Automated tab")
     def click_automated(self):
         self.click(self.AUTOMATED_TAB)
         return self
 
+    @allure.step("Open Out of sync tab")
     def click_out_of_sync(self):
         self.click(self.OUT_OF_SYNC_TAB)
         return self
 
+    @allure.step("Open Detached tab")
     def click_detached(self):
         self.click(self.DETACHED_TAB)
         return self
 
+    @allure.step("Open Starred tab")
     def click_starred(self):
         self.click(self.STARRED_TAB)
         return self
 
+    @allure.step("Open display menu")
     def open_display(self):
         self.click(self.DISPLAY_BUTTON)
         return self
@@ -64,12 +73,14 @@ class NavigationTabs(BasePage):
         link = self.link_by_name(name)
         return link.find_element(By.CSS_SELECTOR, ".new-counter")
 
+    @allure.step("Verify active tab is: {name}")
     def expect_tab_active(self, name: str):
         link = self.link_by_name(name)
         class_name = link.get_attribute("class") or ""
         assert re.search(r"\bactive\b", class_name)
         return self
 
+    @allure.step("Verify tab {name} count is: {expected_count}")
     def expect_tab_count(self, name: str, expected_count: int):
         counter = self.counter_by_name(name)
         assert counter.text.strip() == str(expected_count)

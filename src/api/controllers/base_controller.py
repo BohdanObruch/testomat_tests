@@ -1,5 +1,6 @@
 import json
 
+import allure
 import httpx
 
 from src.api.logger import get_logger
@@ -21,13 +22,14 @@ class BaseController:
             return self._jwt_token
 
         url = self._url("/api/login")
-        response = self._client.post(
-            url,
-            json={"api_token": self.api_token},
-        )
-        response.raise_for_status()
-        self._jwt_token = response.json()["jwt"]
-        return self._jwt_token
+        with allure.step("Authenticate API client"):
+            response = self._client.post(
+                url,
+                json={"api_token": self.api_token},
+            )
+            response.raise_for_status()
+            self._jwt_token = response.json()["jwt"]
+            return self._jwt_token
 
     def _headers(self, *, content_type: bool = False) -> dict[str, str]:
         headers = {"Authorization": f"Bearer {self._authenticate()}"}
@@ -53,42 +55,47 @@ class BaseController:
 
     def _get(self, endpoint: str, params: dict | None = None) -> dict:
         url = self._url(endpoint)
-        self._logger.debug("GET %s params=%s", url, params)
-        response = self._client.get(url, headers=self._headers(), params=params)
-        self._logger.debug("GET %s -> %s", url, response.status_code)
-        response.raise_for_status()
-        return self._response_json(response)
+        with allure.step(f"GET {endpoint}"):
+            self._logger.debug("GET %s params=%s", url, params)
+            response = self._client.get(url, headers=self._headers(), params=params)
+            self._logger.debug("GET %s -> %s", url, response.status_code)
+            response.raise_for_status()
+            return self._response_json(response)
 
     def _post(self, endpoint: str, data: dict | None = None, params: dict | None = None) -> dict:
         url = self._url(endpoint)
-        self._logger.debug("POST %s params=%s", url, params)
-        response = self._client.post(url, headers=self._headers(content_type=True), params=params, json=data)
-        self._logger.debug("POST %s -> %s", url, response.status_code)
-        response.raise_for_status()
-        return self._response_json(response)
+        with allure.step(f"POST {endpoint}"):
+            self._logger.debug("POST %s params=%s", url, params)
+            response = self._client.post(url, headers=self._headers(content_type=True), params=params, json=data)
+            self._logger.debug("POST %s -> %s", url, response.status_code)
+            response.raise_for_status()
+            return self._response_json(response)
 
     def _put(self, endpoint: str, data: dict | None = None) -> dict:
         url = self._url(endpoint)
-        self._logger.debug("PUT %s", url)
-        response = self._client.put(url, headers=self._headers(content_type=True), json=data)
-        self._logger.debug("PUT %s -> %s", url, response.status_code)
-        response.raise_for_status()
-        return self._response_json(response)
+        with allure.step(f"PUT {endpoint}"):
+            self._logger.debug("PUT %s", url)
+            response = self._client.put(url, headers=self._headers(content_type=True), json=data)
+            self._logger.debug("PUT %s -> %s", url, response.status_code)
+            response.raise_for_status()
+            return self._response_json(response)
 
     def _patch(self, endpoint: str, data: dict | None = None) -> dict:
         url = self._url(endpoint)
-        self._logger.debug("PATCH %s", url)
-        response = self._client.patch(url, headers=self._headers(content_type=True), json=data)
-        self._logger.debug("PATCH %s -> %s", url, response.status_code)
-        response.raise_for_status()
-        return self._response_json(response)
+        with allure.step(f"PATCH {endpoint}"):
+            self._logger.debug("PATCH %s", url)
+            response = self._client.patch(url, headers=self._headers(content_type=True), json=data)
+            self._logger.debug("PATCH %s -> %s", url, response.status_code)
+            response.raise_for_status()
+            return self._response_json(response)
 
     def _delete(self, endpoint: str, params: dict | None = None) -> dict | None:
         url = self._url(endpoint)
-        self._logger.debug("DELETE %s params=%s", url, params)
-        response = self._client.delete(url, headers=self._headers(), params=params)
-        self._logger.debug("DELETE %s -> %s", url, response.status_code)
-        response.raise_for_status()
-        if response.content:
-            return self._response_json(response)
-        return None
+        with allure.step(f"DELETE {endpoint}"):
+            self._logger.debug("DELETE %s params=%s", url, params)
+            response = self._client.delete(url, headers=self._headers(), params=params)
+            self._logger.debug("DELETE %s -> %s", url, response.status_code)
+            response.raise_for_status()
+            if response.content:
+                return self._response_json(response)
+            return None
