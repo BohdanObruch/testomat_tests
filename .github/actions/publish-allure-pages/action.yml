@@ -123,48 +123,48 @@ runs:
             cp -R "$dir"/. "$merged_dir"/
           done
 
-          python - <<'PY'
-          import json
-          from pathlib import Path
+          python -c '
+        import json
+        from pathlib import Path
 
-          root = Path("allure-results/merged")
-          by_key = {}
-          to_delete = []
+        root = Path("allure-results/merged")
+        by_key = {}
+        to_delete = []
 
-          for file in root.glob("*-result.json"):
-              try:
-                  data = json.loads(file.read_text(encoding="utf-8"))
-              except Exception:
-                  continue
+        for file in root.glob("*-result.json"):
+            try:
+                data = json.loads(file.read_text(encoding="utf-8"))
+            except Exception:
+                continue
 
-              history_id = data.get("historyId")
-              full_name = data.get("fullName") or data.get("name") or file.name
-              params = data.get("parameters") or []
-              params_key = tuple(sorted((p.get("name"), str(p.get("value"))) for p in params if isinstance(p, dict)))
-              key = history_id or (full_name, params_key)
+            history_id = data.get("historyId")
+            full_name = data.get("fullName") or data.get("name") or file.name
+            params = data.get("parameters") or []
+            params_key = tuple(sorted((p.get("name"), str(p.get("value"))) for p in params if isinstance(p, dict)))
+            key = history_id or (full_name, params_key)
 
-              time = data.get("time") or {}
-              stop = int(time.get("stop") or 0)
-              start = int(time.get("start") or 0)
-              rank = (stop, start)
+            time = data.get("time") or {}
+            stop = int(time.get("stop") or 0)
+            start = int(time.get("start") or 0)
+            rank = (stop, start)
 
-              if key not in by_key:
-                  by_key[key] = (rank, file)
-                  continue
+            if key not in by_key:
+                by_key[key] = (rank, file)
+                continue
 
-              existing_rank, existing_file = by_key[key]
-              if rank >= existing_rank:
-                  to_delete.append(existing_file)
-                  by_key[key] = (rank, file)
-              else:
-                  to_delete.append(file)
+            existing_rank, existing_file = by_key[key]
+            if rank >= existing_rank:
+                to_delete.append(existing_file)
+                by_key[key] = (rank, file)
+            else:
+                to_delete.append(file)
 
-          for file in to_delete:
-              try:
-                  file.unlink()
-              except FileNotFoundError:
-                  pass
-          PY
+        for file in to_delete:
+            try:
+                file.unlink()
+            except FileNotFoundError:
+                pass
+        '
 
           npx --yes allure@3 generate "$merged_dir" -o pages
         else
