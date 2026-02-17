@@ -54,6 +54,14 @@ jobs:
           fi
           uv run pytest tests/web -m "${{ matrix.suite }} and not selenium" -n 3 --dist=loadscope
 
+      - name: Ensure Allure artifact exists
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p test-result/allure-results
+          if ! find test-result/allure-results -type f -name '*-result.json' | grep -q .; then
+            echo "{}" > test-result/allure-results/.placeholder.json
+          fi
       - name: Upload Allure results
         if: always()
         uses: actions/upload-artifact@v4

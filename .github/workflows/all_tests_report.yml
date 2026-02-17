@@ -54,7 +54,7 @@ jobs:
   run-selenium:
     uses: ./.github/workflows/selenium_tests.yml
     with:
-      test_suite: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+      test_suite: ${{ github.event_name == 'pull_request' && 'all' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
     secrets: inherit
 
   publish-report:

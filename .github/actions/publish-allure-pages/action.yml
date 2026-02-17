@@ -76,7 +76,7 @@ runs:
       with:
         node-version: '22'
 
-    - name: Generate Allure 3 reports
+    - name: Generate unified Allure 3 report
       shell: bash
       run: |
         set -euo pipefail
@@ -90,66 +90,34 @@ runs:
           prefixes+=("${{ inputs.artifact-prefix-3 }}")
         fi
 
+        result_dirs=()
         for prefix in "${prefixes[@]}"; do
           for suite in smoke regression; do
             result_dir="allure-results/${prefix}/${suite}"
-            if [ -d "$result_dir" ] && [ "$(ls -A "$result_dir")" ]; then
-              npx --yes allure@3 generate "$result_dir" -o "pages/${prefix}/${suite}"
+            if [ -d "$result_dir" ] && find "$result_dir" -type f -name '*-result.json' | grep -q .; then
+              result_dirs+=("$result_dir")
             fi
           done
         done
 
-    - name: Create Pages index
-      shell: bash
-      run: |
-        set -euo pipefail
-
-        normalize_name() {
-          echo "$1" | tr '[:lower:]' '[:upper:]' | sed 's/^API$/API/'
-        }
-
-        prefixes=("${{ inputs.artifact-prefix-1 }}")
-        if [ -n "${{ inputs.artifact-prefix-2 }}" ]; then
-          prefixes+=("${{ inputs.artifact-prefix-2 }}")
+        if [ "${#result_dirs[@]}" -gt 0 ]; then
+          npx --yes allure@3 generate "${result_dirs[@]}" -o pages --clean
+        else
+          cat > pages/index.html <<'HTML'
+        <!doctype html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>No Allure results</title>
+        </head>
+        <body>
+          <h1>No Allure results available</h1>
+          <p>No suite produced valid <code>*-result.json</code> files in this run.</p>
+        </body>
+        </html>
+        HTML
         fi
-        if [ -n "${{ inputs.artifact-prefix-3 }}" ]; then
-          prefixes+=("${{ inputs.artifact-prefix-3 }}")
-        fi
-
-        {
-          echo '<!doctype html>'
-          echo '<html lang="en">'
-          echo '<head>'
-          echo '  <meta charset="UTF-8" />'
-          echo '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />'
-          echo "  <title>${{ inputs.report-title }}</title>"
-          echo '</head>'
-          echo '<body>'
-          echo "  <h1>${{ inputs.report-title }}</h1>"
-
-          for prefix in "${prefixes[@]}"; do
-            label="$(normalize_name "$prefix")"
-            echo "  <h2>${label}</h2>"
-            echo '  <ul>'
-
-            if [ -f "pages/${prefix}/smoke/index.html" ]; then
-              echo "    <li><a href=\"./${prefix}/smoke/index.html\">Smoke report</a></li>"
-            else
-              echo '    <li>Smoke report: not available</li>'
-            fi
-
-            if [ -f "pages/${prefix}/regression/index.html" ]; then
-              echo "    <li><a href=\"./${prefix}/regression/index.html\">Regression report</a></li>"
-            else
-              echo '    <li>Regression report: not available</li>'
-            fi
-
-            echo '  </ul>'
-          done
-
-          echo '</body>'
-          echo '</html>'
-        } > pages/index.html
 
     - name: Configure Pages
       uses: actions/configure-pages@v5

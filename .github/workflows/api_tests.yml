@@ -53,7 +53,16 @@ jobs:
           if [ "${{ matrix.suite }}" = "smoke" ]; then
             uv run pytest tests/api -m "api and smoke" -n 3 --dist=loadscope
           else
-            uv run pytest tests/api -m "api" -n 3 --dist=loadscope
+            uv run pytest tests/api -m "api and regression" -n 3 --dist=loadscope
+          fi
+
+      - name: Ensure Allure artifact exists
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p test-result/allure-results
+          if ! find test-result/allure-results -type f -name '*-result.json' | grep -q .; then
+            echo "{}" > test-result/allure-results/.placeholder.json
           fi
 
       - name: Upload Allure results
