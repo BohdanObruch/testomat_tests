@@ -211,6 +211,40 @@ pytest --html=test-result/report.html
 pytest --tracing=on --screenshot=on --video=on
 ```
 
+## CI (GitHub Actions)
+
+The project uses reusable GitHub Actions workflows for API/UI test execution and a parent workflow that publishes a
+unified Allure report.
+
+### Workflows
+
+- `.github/workflows/all_tests_report.yml`:
+    - Triggers:
+        - `pull_request` to `main`
+        - `schedule` (`0 8 * * 1-5`)
+        - `workflow_dispatch` with `test_suite` (`smoke`, `regression`, `all`)
+    - Runs:
+        - Ruff checks on PRs
+        - Playwright, API, and Selenium reusable workflows
+        - Unified Allure report publication to GitHub Pages
+
+- `.github/workflows/playwright_ui_tests.yml`
+- `.github/workflows/api_tests.yml`
+- `.github/workflows/selenium_tests.yml`
+    - Triggered via `workflow_call` (from parent workflow) or manual `workflow_dispatch`
+    - Support `test_suite` input: `smoke`, `regression`, `all`
+    - Use a matrix (`smoke`, `regression`) and skip non-selected suites inside run steps
+    - Upload Allure artifacts for each suite
+
+### Important Trigger Note
+
+Regular `push` does not start the main CI pipeline by default.
+Use one of the following:
+
+- open/update a PR to `main`
+- run `All Tests And Unified Report` manually (`workflow_dispatch`)
+- rely on scheduled weekday run
+
 ## Allure Artifacts
 
 Playwright fixtures (`tests/fixtures/playwright.py`) attach artifacts directly to Allure:
