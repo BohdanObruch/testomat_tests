@@ -17,6 +17,7 @@ class NewSuite(BasePage):
     CONTENT = (By.CSS_SELECTOR, ".detail-view-content")
     TITLE_INPUT = (By.CSS_SELECTOR, "input[placeholder='Title']")
     DESCRIPTION_IFRAME = (By.CSS_SELECTOR, ".editor-suite iframe")
+    DESCRIPTION_SURFACE = (By.CSS_SELECTOR, ".monaco-editor .view-lines")
     DESCRIPTION_INPUT = (By.CSS_SELECTOR, "textarea.inputarea")
 
     SELECT_SUITE_HEADING = (By.XPATH, "//*[normalize-space()='Select suite for test']")
@@ -67,6 +68,9 @@ class NewSuite(BasePage):
     @allure.step("Fill suite description")
     def fill_description(self, text: str):
         self.wait.for_frame(self.DESCRIPTION_IFRAME)
-        self.type_text(self.DESCRIPTION_INPUT, text)
+        self.click(self.DESCRIPTION_SURFACE)
+        editor = self.wait.for_present(self.DESCRIPTION_INPUT)
+        self.driver.execute_script("arguments[0].focus();", editor)
+        editor.send_keys(text)
         self.driver.switch_to.default_content()
         return self
