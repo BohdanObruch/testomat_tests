@@ -101,7 +101,15 @@ runs:
         done
 
         if [ "${#result_dirs[@]}" -gt 0 ]; then
-          npx --yes allure@3 generate "${result_dirs[@]}" -o pages --clean
+          merged_dir="allure-results/merged"
+          rm -rf "$merged_dir"
+          mkdir -p "$merged_dir"
+
+          for dir in "${result_dirs[@]}"; do
+            cp -R "$dir"/. "$merged_dir"/
+          done
+
+          npx --yes allure@3 generate "$merged_dir" -o pages
         else
           cat > pages/index.html <<'HTML'
         <!doctype html>
