@@ -168,20 +168,19 @@ runs:
 
           npx --yes allure@3 generate "$merged_dir" -o pages
         else
-          cat > pages/index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>No Allure results</title>
-          </head>
-          <body>
-            <h1>No Allure results available</h1>
-            <p>No suite produced valid <code>*-result.json</code> files in this run.</p>
-          </body>
-          </html>
-          HTML
+          printf '%s\n' \
+            '<!doctype html>' \
+            '<html lang="en">' \
+            '<head>' \
+            '  <meta charset="UTF-8" />' \
+            '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />' \
+            '  <title>No Allure results</title>' \
+            '</head>' \
+            '<body>' \
+            '  <h1>No Allure results available</h1>' \
+            '  <p>No suite produced valid <code>*-result.json</code> files in this run.</p>' \
+            '</body>' \
+            '</html>' > pages/index.html
         fi
 
     - name: Configure Pages
