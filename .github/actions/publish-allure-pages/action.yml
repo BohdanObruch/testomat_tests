@@ -8,14 +8,26 @@ inputs:
   artifact-prefix-1:
     description: 'Primary artifact prefix, for example: playwright'
     required: true
+  suite-mode-1:
+    description: 'Expected suite mode for prefix 1: smoke, regression, all'
+    required: false
+    default: 'all'
   artifact-prefix-2:
     description: 'Optional second artifact prefix, for example: api'
     required: false
     default: ''
+  suite-mode-2:
+    description: 'Expected suite mode for prefix 2: smoke, regression, all'
+    required: false
+    default: 'all'
   artifact-prefix-3:
     description: 'Optional third artifact prefix, for example: selenium'
     required: false
     default: ''
+  suite-mode-3:
+    description: 'Expected suite mode for prefix 3: smoke, regression, all'
+    required: false
+    default: 'all'
 
 outputs:
   page_url:
@@ -26,6 +38,7 @@ runs:
   using: 'composite'
   steps:
     - name: Download ${{ inputs.artifact-prefix-1 }} smoke Allure results
+      if: inputs.suite-mode-1 != 'regression'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
@@ -33,6 +46,7 @@ runs:
         path: allure-results/${{ inputs.artifact-prefix-1 }}/smoke
 
     - name: Download ${{ inputs.artifact-prefix-1 }} regression Allure results
+      if: inputs.suite-mode-1 != 'smoke'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
@@ -40,7 +54,7 @@ runs:
         path: allure-results/${{ inputs.artifact-prefix-1 }}/regression
 
     - name: Download ${{ inputs.artifact-prefix-2 }} smoke Allure results
-      if: inputs.artifact-prefix-2 != ''
+      if: inputs.artifact-prefix-2 != '' && inputs.suite-mode-2 != 'regression'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
@@ -48,7 +62,7 @@ runs:
         path: allure-results/${{ inputs.artifact-prefix-2 }}/smoke
 
     - name: Download ${{ inputs.artifact-prefix-2 }} regression Allure results
-      if: inputs.artifact-prefix-2 != ''
+      if: inputs.artifact-prefix-2 != '' && inputs.suite-mode-2 != 'smoke'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
@@ -56,7 +70,7 @@ runs:
         path: allure-results/${{ inputs.artifact-prefix-2 }}/regression
 
     - name: Download ${{ inputs.artifact-prefix-3 }} smoke Allure results
-      if: inputs.artifact-prefix-3 != ''
+      if: inputs.artifact-prefix-3 != '' && inputs.suite-mode-3 != 'regression'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
@@ -64,7 +78,7 @@ runs:
         path: allure-results/${{ inputs.artifact-prefix-3 }}/smoke
 
     - name: Download ${{ inputs.artifact-prefix-3 }} regression Allure results
-      if: inputs.artifact-prefix-3 != ''
+      if: inputs.artifact-prefix-3 != '' && inputs.suite-mode-3 != 'smoke'
       continue-on-error: true
       uses: actions/download-artifact@v4
       with:
