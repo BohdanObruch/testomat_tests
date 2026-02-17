@@ -74,5 +74,8 @@ jobs:
         with:
           report-title: Unified Test Reports
           artifact-prefix-1: playwright
+          suite-mode-1: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
           artifact-prefix-2: api
+          suite-mode-2: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
           artifact-prefix-3: selenium
+          suite-mode-3: ${{ github.event_name == 'pull_request' && 'all' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
