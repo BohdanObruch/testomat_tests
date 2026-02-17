@@ -124,74 +124,74 @@ runs:
           done
 
           python - <<'PY'
-  import json
-  from pathlib import Path
-  
-  root = Path("allure-results/merged")
-  by_key = {}
-  to_delete = []
+          import json
+          from pathlib import Path
 
-for file in root.glob("*-result.json"):
-  try:
-    data = json.loads(file.read_text(encoding="utf-8"))
-  except Exception:
-    continue
+          root = Path("allure-results/merged")
+          by_key = {}
+          to_delete = []
 
-  history_id = data.get("historyId")
-  full_name = data.get("fullName") or data.get("name") or file.name
-  params = data.get("parameters") or []
-  params_key = tuple(sorted((p.get("name"), str(p.get("value"))) for p in params if isinstance(p, dict)))
-  key = history_id or (full_name, params_key)
-  
-  time = data.get("time") or {}
-  stop = int(time.get("stop") or 0)
-  start = int(time.get("start") or 0)
-  rank = (stop, start)
+          for file in root.glob("*-result.json"):
+              try:
+                  data = json.loads(file.read_text(encoding="utf-8"))
+              except Exception:
+                  continue
 
-  if key not in by_key:
-    by_key[key] = (rank, file)
-    continue
+              history_id = data.get("historyId")
+              full_name = data.get("fullName") or data.get("name") or file.name
+              params = data.get("parameters") or []
+              params_key = tuple(sorted((p.get("name"), str(p.get("value"))) for p in params if isinstance(p, dict)))
+              key = history_id or (full_name, params_key)
 
-  existing_rank, existing_file = by_key[key]
-  if rank >= existing_rank:
-    to_delete.append(existing_file)
-    by_key[key] = (rank, file)
-  else:
-    to_delete.append(file)
+              time = data.get("time") or {}
+              stop = int(time.get("stop") or 0)
+              start = int(time.get("start") or 0)
+              rank = (stop, start)
 
-for file in to_delete:
-  try:
-    file.unlink()
-  except FileNotFoundError:
-    pass
-  PY
-  
-  npx --yes allure@3 generate "$merged_dir" -o pages
-  else
-  cat > pages/index.html <<'HTML'
-  <!doctype html>
-  <html lang="en">
-  <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>No Allure results</title>
-  </head>
-  <body>
-  <h1>No Allure results available</h1>
-  <p>No suite produced valid <code>*-result.json</code> files in this run.</p>
-  </body>
-  </html>
-  HTML
-  fi
+              if key not in by_key:
+                  by_key[key] = (rank, file)
+                  continue
 
-  - name: Configure Pages
-    uses: actions/configure-pages@v5
+              existing_rank, existing_file = by_key[key]
+              if rank >= existing_rank:
+                  to_delete.append(existing_file)
+                  by_key[key] = (rank, file)
+              else:
+                  to_delete.append(file)
 
-  - name: Upload Pages artifact
-    uses: actions/upload-pages-artifact@v3
-    with:
-      path: pages
+          for file in to_delete:
+              try:
+                  file.unlink()
+              except FileNotFoundError:
+                  pass
+          PY
 
-  - name: Deploy to GitHub Pages
-    id: deployment
-    uses: actions/deploy-pages@v4
+          npx --yes allure@3 generate "$merged_dir" -o pages
+        else
+          cat > pages/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>No Allure results</title>
+          </head>
+          <body>
+            <h1>No Allure results available</h1>
+            <p>No suite produced valid <code>*-result.json</code> files in this run.</p>
+          </body>
+          </html>
+          HTML
+        fi
+
+    - name: Configure Pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: pages
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
