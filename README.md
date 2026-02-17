@@ -1,6 +1,7 @@
 # Testomat E2E Tests
 
-Playwright-based end-to-end testing framework for [Testomat](https://testomat.io) application.
+End-to-end testing framework for [Testomat](https://testomat.io) with three layers: Playwright UI, Selenium UI, and API
+tests.
 
 ## Project Structure
 
@@ -109,7 +110,7 @@ testomat_tests/
 |       |       |-- project_creation_test.py
 |       |       |-- projects_page_test.py
 |       |       |-- switch_company_test.py
-|       |       |-- test_create_suite.py
+|       |       |-- test_suite.py
 |       |       `-- test_delete_project.py
 |       |-- cookies_test.py
 |       |-- login_page_test.py
@@ -121,8 +122,8 @@ testomat_tests/
 |       `-- free_plan/
 |           `-- free_projects_test.py
 |
-|-- test-result/                  # Test execution results
-|   |-- report.html               # HTML report (pytest-html)
+|-- test-result/                  # Test execution artifacts
+|   |-- allure-results/           # Raw Allure results
 |   |-- screenshots/              # Screenshots on failure
 |   |-- traces/                   # Playwright traces
 |   |-- videos/                   # Video recordings (local runs only)
@@ -178,37 +179,34 @@ TESTOMAT_TOKEN=your_api_token
 
 ```bash
 # Run all tests
-pytest
+uv run pytest
 
 # Run smoke tests
-pytest -m smoke
+uv run pytest -m smoke
 
 # Run regression tests
-pytest -m regression
+uv run pytest -m regression
 
 # Run web UI tests
-pytest -m web
+uv run pytest -m web
 
 # Run API tests
-pytest -m api
+uv run pytest -m api
 
 # Run Selenium tests
-pytest -m selenium
+uv run pytest -m selenium
 
 # Run tests in headed mode (Playwright + Selenium)
-pytest --headed
+uv run pytest --headed
 
 # Run specific test file
-pytest tests/web/login_page_test.py
+uv run pytest tests/web/login_page_test.py
 
 # Run specific Selenium test file
-pytest tests/web/selenium/simple_selenium_test.py
-
-# Generate HTML report (default: test-result/report.html)
-pytest --html=test-result/report.html
+uv run pytest tests/web/selenium/enterprise_plan/test_suite.py
 
 # Override Playwright artifacts (defaults are set in pyproject.toml)
-pytest --tracing=on --screenshot=on --video=on
+uv run pytest --tracing=on --screenshot=on --video=on
 ```
 
 ## CI (GitHub Actions)
@@ -219,22 +217,31 @@ unified Allure report.
 ### Workflows
 
 - `.github/workflows/all_tests_report.yml`:
-    - Triggers:
-        - `pull_request` to `main`
-        - `schedule` (`0 8 * * 1-5`)
-        - `workflow_dispatch` with `test_suite` (`smoke`, `regression`, `all`)
-    - Runs:
-        - Ruff checks on PRs
-        - Playwright, API, and Selenium reusable workflows
-        - Unified Allure report publication to GitHub Pages
+    - Triggers: `pull_request` to `main`, `schedule` (`0 8 * * 1-5`), `workflow_dispatch`
+    - Runs Ruff checks on PRs, then calls reusable Playwright/API/Selenium workflows
+    - Publishes unified Allure 3 report to GitHub Pages
 
-- `.github/workflows/playwright_ui_tests.yml`
-- `.github/workflows/api_tests.yml`
-- `.github/workflows/selenium_tests.yml`
-    - Triggered via `workflow_call` (from parent workflow) or manual `workflow_dispatch`
-    - Support `test_suite` input: `smoke`, `regression`, `all`
-    - Use a matrix (`smoke`, `regression`) and skip non-selected suites inside run steps
-    - Upload Allure artifacts for each suite
+- `.github/workflows/playwright_ui_tests.yml`:
+    - Matrix: `smoke`, `regression`
+    - Command: `uv run pytest tests/web -m "${suite} and not selenium" -n 3 --dist=loadscope`
+    - Uploads `playwright-<suite>-allure-results` and traces on failure
+
+- `.github/workflows/api_tests.yml`:
+    - Matrix: `smoke`, `regression`
+    - Commands:
+        - smoke: `uv run pytest tests/api -m "api and smoke" -n 3 --dist=loadscope`
+        - regression: `uv run pytest tests/api -m "api and regression" -n 3 --dist=loadscope`
+    - Uploads `api-<suite>-allure-results`
+
+- `.github/workflows/selenium_tests.yml`:
+    - Matrix: `smoke`, `regression`
+    - Command: `uv run pytest tests/web/selenium -m "selenium and ${suite}" -n 2 --dist=loadscope`
+    - Uploads `selenium-<suite>-allure-results` and `selenium-<suite>-screenshots`
+
+- `.github/actions/setup/action.yml`:
+    - Shared setup used by all reusable workflows
+    - Installs `uv`, Python 3.14, dependencies via `uv sync --frozen`
+    - Optionally installs Playwright Chromium or Google Chrome based on action inputs
 
 ### Important Trigger Note
 
@@ -247,15 +254,21 @@ Use one of the following:
 
 ## Allure Artifacts
 
-Playwright fixtures (`tests/fixtures/playwright.py`) attach artifacts directly to Allure:
+Playwright fixture (`tests/fixtures/playwright.py`) attaches artifacts directly to Allure:
 
 - Trace: attached as `.zip` with `application/vnd.allure.playwright-trace`
 - Screenshot: attached as PNG
 - Video: attached as `.webm`
 
+Selenium fixture (`tests/fixtures/selenium.py`) also attaches PNG screenshots to Allure, and saves the same files to
+`test-result/screenshots`.
+
 Notes:
 
-- Videos are created only on local runs.
+- Screenshots for both Playwright and Selenium are controlled by `--screenshot` (`on`, `only-on-failure`, `off`).
+- Selenium screenshot files are always stored under `test-result/screenshots` when capture is enabled.
+- CI uploads Selenium screenshots from `test-result/screenshots` as a separate artifact.
+- Videos are created only for Playwright local runs.
 - On CI (`CI=true/1/...`), video recording is disabled, so video files/attachments are not produced.
 - Traces and screenshots still work according to your pytest options.
 
@@ -370,18 +383,24 @@ ruff format .
 
 ## Browser Configuration
 
-Default browser settings (configured in `tests/fixtures/playwright.py` and `tests/fixtures/selenium.py`):
+Playwright defaults (configured in `tests/fixtures/playwright.py`):
 
 - Resolution: 1920x1080
 - Locale: uk-UA
 - Timezone: Europe/Kyiv
 - Permissions: geolocation
-- Headless: True by default
-- Headed mode: pass `--headed` (works for both Playwright and Selenium)
+- Headless: enabled by default
 - Video recording: retain on failure for local runs (default in `pyproject.toml`)
 - Video on CI: disabled
 - Screenshots: only on failure (default in `pyproject.toml`)
 - Tracing: retain on failure (default in `pyproject.toml`)
+
+Selenium defaults (configured in `tests/fixtures/selenium.py`):
+
+- Chrome WebDriver with window size 1920x1080
+- Headless mode by default (`--headless=new`)
+- `--headed` switches to headed mode
+- Screenshots captured using the same pytest `--screenshot` option and written to `test-result/screenshots`
 
 ## Dependencies
 
@@ -389,7 +408,8 @@ Default browser settings (configured in `tests/fixtures/playwright.py` and `test
 
 - **playwright** - Browser automation
 - **pytest** - Test framework
-- **pytest-html** - HTML reporting
+- **pytest-xdist** - Parallel test execution
+- **allure-pytest** - Allure integration for pytest
 - **pytest-playwright** - Playwright pytest integration
 - **faker** - Test data generation
 - **httpx** - API client
@@ -399,4 +419,5 @@ Default browser settings (configured in `tests/fixtures/playwright.py` and `test
 
 ### Development
 
+- **datamodel-code-generator** - Generate Pydantic models from API schema
 - **ruff** - Linter and formatter
