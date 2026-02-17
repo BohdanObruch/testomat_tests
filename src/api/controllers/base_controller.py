@@ -49,7 +49,7 @@ class BaseController:
             return {}
         try:
             return response.json()
-        except (UnicodeDecodeError, json.JSONDecodeError, ValueError):
+        except UnicodeDecodeError, json.JSONDecodeError, ValueError:
             text = response.content.decode("utf-8", errors="replace")
             return {"raw": text}
 

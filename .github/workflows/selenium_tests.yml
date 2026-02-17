@@ -16,7 +16,7 @@ on:
       test_suite:
         description: 'Test suite to run'
         required: true
-        default: smoke
+        default: all
         type: choice
         options:
           - smoke
@@ -53,6 +53,15 @@ jobs:
             exit 0
           fi
           uv run pytest tests/web/selenium -m "selenium and ${{ matrix.suite }}" -n 2 --dist=loadscope
+
+      - name: Ensure Allure artifact exists
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p test-result/allure-results
+          if ! find test-result/allure-results -type f -name '*-result.json' | grep -q .; then
+            echo "{}" > test-result/allure-results/.placeholder.json
+          fi
 
       - name: Upload Allure results
         if: always()
