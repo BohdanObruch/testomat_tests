@@ -37,6 +37,11 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: Define Pages artifact name
+      id: pages-artifact
+      shell: bash
+      run: echo "name=github-pages-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+
     - name: Download ${{ inputs.artifact-prefix-1 }} smoke Allure results
       if: inputs.suite-mode-1 != 'regression'
       continue-on-error: true
@@ -189,8 +194,11 @@ runs:
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
+        name: ${{ steps.pages-artifact.outputs.name }}
         path: pages
 
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+      with:
+        artifact_name: ${{ steps.pages-artifact.outputs.name }}
