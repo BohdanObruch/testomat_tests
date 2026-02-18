@@ -9,6 +9,7 @@ fake = Faker()
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestTemplates:
     def test_list_templates(self, project: Project, template_api: TemplateApi):
         with allure.step("List templates for project"):

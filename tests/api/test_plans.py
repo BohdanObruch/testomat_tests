@@ -6,6 +6,7 @@ from src.api.models import CaseModel, Project
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestPlans:
     def test_list_plans(self, project: Project, plan_api: PlanApi):
         with allure.step("List plans for project"):

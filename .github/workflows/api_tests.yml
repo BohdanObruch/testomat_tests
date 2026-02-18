@@ -16,7 +16,7 @@ on:
       test_suite:
         description: 'Test suite to run'
         required: true
-        default: smoke
+        default: all
         type: choice
         options:
           - smoke

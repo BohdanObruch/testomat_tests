@@ -9,6 +9,7 @@ fake = Faker()
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestRunGroups:
     def test_list_rungroups(self, project: Project, rungroup_api: RunGroupApi):
         with allure.step("List run groups for project"):
@@ -38,6 +39,7 @@ class TestRunGroups:
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestRuns:
     def test_list_runs(self, project: Project, run_api: RunApi):
         with allure.step("List runs for project"):

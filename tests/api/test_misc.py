@@ -12,6 +12,7 @@ from src.api.models import CaseModel, Project
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestMiscEndpoints:
     def test_attachments_list(self, project: Project, created_test: CaseModel, attachment_api: AttachmentApi):
         with allure.step("List attachments for test case"):
