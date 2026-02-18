@@ -48,7 +48,7 @@ jobs:
   run-api:
     uses: ./.github/workflows/api_tests.yml
     with:
-      test_suite: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+      test_suite: ${{ github.event_name == 'pull_request' && 'all' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
     secrets: inherit
 
   run-selenium:
@@ -76,6 +76,6 @@ jobs:
           artifact-prefix-1: playwright
           suite-mode-1: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
           artifact-prefix-2: api
-          suite-mode-2: ${{ github.event_name == 'pull_request' && 'smoke' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
+          suite-mode-2: ${{ github.event_name == 'pull_request' && 'all' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}
           artifact-prefix-3: selenium
           suite-mode-3: ${{ github.event_name == 'pull_request' && 'all' || github.event_name == 'schedule' && 'all' || inputs.test_suite }}

@@ -10,6 +10,7 @@ fake = Faker()
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestAuthentication:
     def test_login_with_valid_token(self, api_client: ApiClient):
         with allure.step("Authenticate with valid API token"):
@@ -25,6 +26,7 @@ class TestAuthentication:
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestProjects:
     def test_get_projects_returns_response(self, api_client: ApiClient):
         with allure.step("Get projects response"):
@@ -50,11 +52,15 @@ class TestProjects:
 
 
 class TestProjectTests:
+    @pytest.mark.api
+    @pytest.mark.regression
     def test_list_project_tests(self, project: Project, test_api: CaseClient):
         with allure.step("List tests for project"):
             tests = test_api.list(project.id)
             assert isinstance(tests, list)
 
+    @pytest.mark.api
+    @pytest.mark.regression
     def test_update_project_test(self, project: Project, test_api: CaseClient, created_test: CaseModel):
         with allure.step("Update existing test case in project"):
             updated = test_api.update(

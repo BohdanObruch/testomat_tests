@@ -7,6 +7,7 @@ from src.api.utils import extract_first_id
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestAnalytics:
     def test_labels_and_label_detail(self, project: Project, analytics_api: AnalyticsApi):
         with allure.step("Get labels stats and validate response type"):

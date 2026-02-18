@@ -9,6 +9,7 @@ fake = Faker()
 
 
 @pytest.mark.api
+@pytest.mark.regression
 class TestSuites:
     def test_list_suites(self, project: Project, suite_api: SuiteApi):
         with allure.step("List suites for project"):
