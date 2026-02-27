@@ -127,21 +127,25 @@ jobs:
             echo "{}" > allure-results/merged/.placeholder.json
           fi
 
-      - name: Generate Allure report with history
+      - name: Setup Node.js
         if: always()
-        id: allure-report
-        uses: simple-elf/allure-report-action@master
+        uses: actions/setup-node@v4
         with:
-          allure_results: allure-results/merged
-          gh_pages: gh-pages
-          allure_report: allure-report
-          allure_history: allure-history
-          keep_reports: 20
+          node-version: '22'
 
-      - name: Publish Allure history to gh-pages
+      - name: Generate Allure 3 report
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf allure-report
+          npx --yes allure@3 generate allure-results/merged -o allure-report
+          touch allure-report/.nojekyll
+
+      - name: Publish Allure 3 report to gh-pages
         if: always()
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report
