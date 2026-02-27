@@ -1,0 +1,6 @@
+INFO     httpx:_client.py:1025 HTTP Request: GET https://app.testomat.io/api/projects "HTTP/1.1 200 OK"
+INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/rungroups "HTTP/1.1 200 OK"
+INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/archive "HTTP/1.1 200 OK"
+INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/unarchive "HTTP/1.1 200 OK"
+INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/cce50a34/copy "HTTP/1.1 204 No Content"
+INFO     httpx:_client.py:1025 HTTP Request: DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/cce50a34 "HTTP/1.1 204 No Content"
