@@ -1,0 +1,4 @@
+2026-03-06 08:55:06,256 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-03-06 08:55:09,601 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-03-06 08:55:09,604 | UserApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/users params=None
+2026-03-06 08:55:10,182 | UserApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/users -> 200
