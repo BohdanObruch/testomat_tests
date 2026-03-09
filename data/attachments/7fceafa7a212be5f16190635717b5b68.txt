@@ -1,7 +1,0 @@
-INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/login "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: GET https://app.testomat.io/api/projects "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/suites "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/a-farewell-to-arms/tests "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: GET https://app.testomat.io/api/a-farewell-to-arms/attachments?test_id=e9a2c27c "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: DELETE https://app.testomat.io/api/a-farewell-to-arms/tests/e9a2c27c "HTTP/1.1 200 OK"
-INFO     httpx:_client.py:1025 HTTP Request: DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/cad9f9ec "HTTP/1.1 200 OK"

@@ -1,2 +1,0 @@
-2026-03-06 08:55:10,191 | UserProjectApi | DEBUG | GET https://app.testomat.io/api/user_projects/jiraissues params=None
-2026-03-06 08:55:10,349 | UserProjectApi | DEBUG | GET https://app.testomat.io/api/user_projects/jiraissues -> 200
