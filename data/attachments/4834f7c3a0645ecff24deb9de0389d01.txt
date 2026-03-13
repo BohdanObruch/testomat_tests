@@ -1,0 +1,14 @@
+2026-03-13 08:57:48,501 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-03-13 08:57:51,372 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-03-13 08:57:51,376 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups params=None
+2026-03-13 08:57:51,638 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups -> 200
+2026-03-13 08:57:51,639 | RunApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/runs params=None
+2026-03-13 08:57:52,188 | RunApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/runs -> 200
+2026-03-13 08:57:52,190 | RunApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544 params=None
+2026-03-13 08:57:52,486 | RunApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544 -> 200
+2026-03-13 08:57:52,486 | RunApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544
+2026-03-13 08:57:52,813 | RunApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544 -> 200
+2026-03-13 08:57:52,814 | RunApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544 params=None
+2026-03-13 08:57:53,307 | RunApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/runs/19aa1544 -> 200
+2026-03-13 08:57:53,308 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/92ccccab params=None
+2026-03-13 08:57:53,560 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/92ccccab -> 204
