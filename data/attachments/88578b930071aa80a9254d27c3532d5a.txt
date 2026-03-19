@@ -1,4 +1,0 @@
-2026-03-18 09:05:48,066 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
-2026-03-18 09:05:51,193 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
-2026-03-18 09:05:51,197 | PlanApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/plans params=None
-2026-03-18 09:05:51,441 | PlanApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/plans -> 200
