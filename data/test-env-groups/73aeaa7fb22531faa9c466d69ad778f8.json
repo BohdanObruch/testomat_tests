@@ -1,1 +1,1 @@
-{"id":"73aeaa7fb22531faa9c466d69ad778f8","fullName":"tests.web.enterprise_plan.test_create_suite#test_create_test_suite","name":"test_create_test_suite","status":"failed","testResultsByEnv":{"default":"342a5213e260731bba3f50da4c8127f1"}}
+{"id":"73aeaa7fb22531faa9c466d69ad778f8","fullName":"tests.web.enterprise_plan.test_create_suite#test_create_test_suite","name":"test_create_test_suite","status":"passed","testResultsByEnv":{"default":"d5854afa38190aa7043df20fc40c6f92"}}
