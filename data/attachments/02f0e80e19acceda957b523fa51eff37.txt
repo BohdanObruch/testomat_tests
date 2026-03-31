@@ -1,0 +1,12 @@
+2026-03-31 09:15:32,647 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-03-31 09:15:36,889 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-03-31 09:15:36,892 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites params=None
+2026-03-31 09:15:37,454 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites -> 200
+2026-03-31 09:15:37,454 | CaseClient | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/tests params=None
+2026-03-31 09:15:38,246 | CaseClient | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/tests -> 200
+2026-03-31 09:15:38,247 | CommentApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/comments params={'test_id': 'fd056588'}
+2026-03-31 09:15:38,408 | CommentApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/comments -> 200
+2026-03-31 09:15:38,409 | CaseClient | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/tests/fd056588 params=None
+2026-03-31 09:15:38,964 | CaseClient | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/tests/fd056588 -> 200
+2026-03-31 09:15:38,965 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/7e7ea300 params=None
+2026-03-31 09:15:39,506 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/7e7ea300 -> 200
