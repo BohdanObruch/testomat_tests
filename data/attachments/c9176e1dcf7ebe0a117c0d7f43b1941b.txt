@@ -1,0 +1,12 @@
+2026-04-03 09:08:28,981 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-04-03 09:08:44,074 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-04-03 09:08:44,078 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites params=None
+2026-04-03 09:08:44,608 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites -> 200
+2026-04-03 09:08:44,609 | CaseClient | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/tests params=None
+2026-04-03 09:08:45,286 | CaseClient | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/tests -> 200
+2026-04-03 09:08:45,286 | AttachmentApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/attachments params={'test_id': 'e7781999'}
+2026-04-03 09:08:45,525 | AttachmentApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/attachments -> 200
+2026-04-03 09:08:45,525 | CaseClient | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/tests/e7781999 params=None
+2026-04-03 09:08:45,948 | CaseClient | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/tests/e7781999 -> 200
+2026-04-03 09:08:45,948 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/a0e03182 params=None
+2026-04-03 09:08:46,330 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/a0e03182 -> 200
