@@ -1,1 +1,1 @@
-{"id":"c724f60d17235197f47ac624674a3cd5","fullName":"tests.web.selenium.enterprise_plan.project_creation_test#test_can_create_project_by_header_button","name":"test_can_create_project_by_header_button","status":"broken","testResultsByEnv":{"default":"a6703bc80b3e99fa1624d1ad6d84951b"}}
+{"id":"c724f60d17235197f47ac624674a3cd5","fullName":"tests.web.selenium.enterprise_plan.project_creation_test#test_can_create_project_by_header_button","name":"test_can_create_project_by_header_button","status":"passed","testResultsByEnv":{"default":"147ad53e082d8fb10f3455f7e52b21cc"}}
