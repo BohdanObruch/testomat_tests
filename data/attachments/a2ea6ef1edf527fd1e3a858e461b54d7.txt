@@ -1,8 +1,0 @@
-2026-04-16 09:44:58,768 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
-2026-04-16 09:45:11,206 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
-2026-04-16 09:45:11,212 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites params=None
-2026-04-16 09:45:11,855 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites -> 200
-2026-04-16 09:45:11,856 | SuiteApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/suites/5a48fd80 params=None
-2026-04-16 09:45:12,004 | SuiteApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/suites/5a48fd80 -> 200
-2026-04-16 09:45:12,005 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/5a48fd80 params=None
-2026-04-16 09:45:12,500 | SuiteApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/suites/5a48fd80 -> 200
