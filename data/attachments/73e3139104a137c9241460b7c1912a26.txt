@@ -1,0 +1,10 @@
+2026-04-22 09:49:30,869 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-04-22 09:49:37,209 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-04-22 09:49:37,214 | TemplateApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/templates params=None
+2026-04-22 09:49:37,456 | TemplateApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/templates -> 200
+2026-04-22 09:49:37,457 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates/1113400 params={'model': None}
+2026-04-22 09:49:37,657 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates/1113400 -> 200
+2026-04-22 09:49:37,657 | TemplateApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/templates/1113400
+2026-04-22 09:49:37,877 | TemplateApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/templates/1113400 -> 200
+2026-04-22 09:49:37,878 | TemplateApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/templates/1113400 params=None
+2026-04-22 09:49:40,075 | TemplateApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/templates/1113400 -> 204
