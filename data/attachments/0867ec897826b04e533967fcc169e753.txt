@@ -1,0 +1,2 @@
+2026-04-29 10:19:17,200 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-04-29 10:19:22,650 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
