@@ -1,0 +1,18 @@
+2026-05-04 10:23:51,779 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-05-04 10:24:10,481 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-05-04 10:24:10,486 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/automation params={'envs': None, 'tags': None}
+2026-05-04 10:24:10,787 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/automation -> 200
+2026-05-04 10:24:10,788 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/counters params={'envs': None, 'tags': None, 'chosen_items': None, 'reload': None}
+2026-05-04 10:24:10,947 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/counters -> 200
+2026-05-04 10:24:10,947 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/failing params={'envs': None, 'tags': None}
+2026-05-04 10:24:11,927 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/failing -> 200
+2026-05-04 10:24:11,927 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/failures params={'envs': None, 'tags': None}
+2026-05-04 10:24:12,979 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/failures -> 200
+2026-05-04 10:24:12,979 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/flaky params={'envs': None, 'tags': None}
+2026-05-04 10:24:14,509 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/flaky -> 200
+2026-05-04 10:24:14,509 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/issues params={'envs': None, 'tags': None}
+2026-05-04 10:24:14,917 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/issues -> 200
+2026-05-04 10:24:14,918 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/pending params={'envs': None, 'tags': None}
+2026-05-04 10:24:15,349 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/pending -> 200
+2026-05-04 10:24:15,349 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/slow params={'envs': None, 'tags': None}
+2026-05-04 10:24:16,302 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/slow -> 200
