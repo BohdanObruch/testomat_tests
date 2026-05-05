@@ -1,0 +1,12 @@
+2026-05-05 10:12:41,460 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-05-05 10:12:44,161 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-05-05 10:12:44,166 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups params=None
+2026-05-05 10:12:44,401 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups -> 200
+2026-05-05 10:12:44,402 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/archive params=None
+2026-05-05 10:12:44,648 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/archive -> 200
+2026-05-05 10:12:44,649 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/unarchive params=None
+2026-05-05 10:12:44,966 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/unarchive -> 200
+2026-05-05 10:12:44,966 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/dbd82b63/copy params=None
+2026-05-05 10:12:45,175 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups/dbd82b63/copy -> 204
+2026-05-05 10:12:45,176 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/dbd82b63 params=None
+2026-05-05 10:12:45,444 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/dbd82b63 -> 204
