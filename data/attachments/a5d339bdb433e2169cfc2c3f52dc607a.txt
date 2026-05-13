@@ -1,4 +1,0 @@
-2026-05-12 10:40:54,497 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
-2026-05-12 10:40:57,484 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
-2026-05-12 10:40:57,490 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/tags params={'envs': None, 'tags': None}
-2026-05-12 10:40:58,250 | AnalyticsApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/analytics/tags -> 200
