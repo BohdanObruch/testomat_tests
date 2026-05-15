@@ -1,1 +1,1 @@
-{"id":"d5214a5fe72294e6ccf5fa0a37786f8d","fullName":"tests.api.projects_test.TestAuthentication#test_login_with_valid_token","name":"test_login_with_valid_token","status":"passed","testResultsByEnv":{"default":"581e3bfce40e797fb54b6f2ea216e952"}}
+{"id":"d5214a5fe72294e6ccf5fa0a37786f8d","fullName":"tests.api.projects_test.TestAuthentication#test_login_with_valid_token","name":"test_login_with_valid_token","status":"passed","testResultsByEnv":{"default":"23f57cab87c8cc9b7a8021191108c496"}}
