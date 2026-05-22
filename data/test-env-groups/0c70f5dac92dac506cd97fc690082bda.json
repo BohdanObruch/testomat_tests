@@ -1,1 +1,1 @@
-{"id":"0c70f5dac92dac506cd97fc690082bda","fullName":"tests.web.selenium.enterprise_plan.project_creation_test#test_choose_project_by_bdd_mode","name":"test_choose_project_by_bdd_mode","status":"passed","testResultsByEnv":{"default":"d406f09611254b25dc517ff63c4b3ff8"}}
+{"id":"0c70f5dac92dac506cd97fc690082bda","fullName":"tests.web.selenium.enterprise_plan.project_creation_test#test_choose_project_by_bdd_mode","name":"test_choose_project_by_bdd_mode","status":"broken","testResultsByEnv":{"default":"4e6f0fbea1b48f218955ff2de4ae1d04"}}

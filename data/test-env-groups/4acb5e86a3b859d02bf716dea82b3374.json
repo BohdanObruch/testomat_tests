@@ -1,1 +1,1 @@
-{"id":"4acb5e86a3b859d02bf716dea82b3374","fullName":"tests.api.test_templates.TestTemplates#test_create_get_update_delete_template","name":"test_create_get_update_delete_template","status":"passed","testResultsByEnv":{"default":"c0bb32da7bde1b67301cba22a409f716"}}
+{"id":"4acb5e86a3b859d02bf716dea82b3374","fullName":"tests.api.test_templates.TestTemplates#test_create_get_update_delete_template","name":"test_create_get_update_delete_template","status":"passed","testResultsByEnv":{"default":"69132f411e1eb10c6d08146eea60f4b4"}}
