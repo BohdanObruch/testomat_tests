@@ -1,0 +1,10 @@
+2026-05-28 11:49:53,775 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-05-28 11:49:56,984 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-05-28 11:49:56,992 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups params=None
+2026-05-28 11:49:57,215 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups -> 200
+2026-05-28 11:49:57,217 | RunGroupApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307 params=None
+2026-05-28 11:49:57,378 | RunGroupApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307 -> 200
+2026-05-28 11:49:57,379 | RunGroupApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307
+2026-05-28 11:49:57,576 | RunGroupApi | DEBUG | PUT https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307 -> 200
+2026-05-28 11:49:57,577 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307 params=None
+2026-05-28 11:49:57,829 | RunGroupApi | DEBUG | DELETE https://app.testomat.io/api/a-farewell-to-arms/rungroups/caded307 -> 204
