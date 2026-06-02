@@ -1,1 +1,1 @@
-{"id":"6e60880b1d72eb5e4d023879bf2072a5","fullName":"tests.web.selenium.enterprise_plan.test_delete_project#test_delete_creation_project","name":"test_delete_creation_project","status":"broken","testResultsByEnv":{"default":"3b88b42dcb95699b1259605febc22330"}}
+{"id":"6e60880b1d72eb5e4d023879bf2072a5","fullName":"tests.web.selenium.enterprise_plan.test_delete_project#test_delete_creation_project","name":"test_delete_creation_project","status":"passed","testResultsByEnv":{"default":"86dc18f58fabe04a1035da79894bea40"}}
