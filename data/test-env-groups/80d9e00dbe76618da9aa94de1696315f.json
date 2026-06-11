@@ -1,1 +1,1 @@
-{"id":"80d9e00dbe76618da9aa94de1696315f","fullName":"tests.api.suite_and_test_creation_test#test_create_suite_roundtrip","name":"test_create_suite_roundtrip","status":"broken","testResultsByEnv":{"default":"da53f0599a20db3a211d952b3672f7c1"}}
+{"id":"80d9e00dbe76618da9aa94de1696315f","fullName":"tests.api.suite_and_test_creation_test#test_create_suite_roundtrip","name":"test_create_suite_roundtrip","status":"passed","testResultsByEnv":{"default":"6e68a13f8658f5f83c0b3b8940866e00"}}
