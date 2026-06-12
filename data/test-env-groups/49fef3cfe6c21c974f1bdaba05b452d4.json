@@ -1,1 +1,1 @@
-{"id":"49fef3cfe6c21c974f1bdaba05b452d4","fullName":"tests.api.projects_test.TestProjects#test_get_projects_returns_response","name":"test_get_projects_returns_response","status":"passed","testResultsByEnv":{"default":"ed5c0347099268bf4ce89c2f4c56bbb9"}}
+{"id":"49fef3cfe6c21c974f1bdaba05b452d4","fullName":"tests.api.projects_test.TestProjects#test_get_projects_returns_response","name":"test_get_projects_returns_response","status":"broken","testResultsByEnv":{"default":"e16facf4f380f9c35801bc1782a55d02"}}
