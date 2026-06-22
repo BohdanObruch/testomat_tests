@@ -1,1 +1,1 @@
-{"id":"7a802024888dcdd8b37e88551109e83b","fullName":"tests.api.test_misc.TestMiscEndpoints#test_attachments_list","name":"test_attachments_list","status":"broken","testResultsByEnv":{"default":"6295b80a664565f141302218a23c327d"}}
+{"id":"7a802024888dcdd8b37e88551109e83b","fullName":"tests.api.test_misc.TestMiscEndpoints#test_attachments_list","name":"test_attachments_list","status":"passed","testResultsByEnv":{"default":"226bb0c3ed4aa0e8a53166de4026d57b"}}
