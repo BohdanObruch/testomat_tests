@@ -1,1 +1,1 @@
-{"id":"c44850bddfc5f2c8a7a33cce19f3d8fc","fullName":"tests.web.login_page_test#test_login_invalid","name":"test_login_invalid[password_2_chars]","status":"failed","testResultsByEnv":{"default":"6a33dbf7c9cd79dab18b2228005e4b87"}}
+{"id":"c44850bddfc5f2c8a7a33cce19f3d8fc","fullName":"tests.web.login_page_test#test_login_invalid","name":"test_login_invalid[password_only_spaces]","status":"failed","testResultsByEnv":{"default":"e0324dd9747322d3a89a7cae0d2b7244"}}
