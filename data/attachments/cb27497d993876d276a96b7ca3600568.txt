@@ -1,1 +1,0 @@
-2026-06-30 11:20:05,800 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
