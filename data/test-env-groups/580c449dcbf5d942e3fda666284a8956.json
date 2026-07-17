@@ -1,1 +1,1 @@
-{"id":"580c449dcbf5d942e3fda666284a8956","fullName":"tests.web.selenium.simple_selenium_test#test_login_with_page_object_v1","name":"test_login_with_page_object_v1","status":"passed","testResultsByEnv":{"default":"916a9f0ed17d11576b9cb317314c9f8c"}}
+{"id":"580c449dcbf5d942e3fda666284a8956","fullName":"tests.web.selenium.simple_selenium_test#test_login_with_page_object_v1","name":"test_login_with_page_object_v1","status":"broken","testResultsByEnv":{"default":"f6a2772a005a7ddd3725bd5abba2c07d"}}
