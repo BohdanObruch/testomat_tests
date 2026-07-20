@@ -1,1 +1,1 @@
-{"id":"c44850bddfc5f2c8a7a33cce19f3d8fc","fullName":"tests.web.login_page_test#test_login_invalid","name":"test_login_invalid[email_missing_at_symbol]","status":"failed","testResultsByEnv":{"default":"a42b6385ef7686216ea28732226c0dc9"}}
+{"id":"c44850bddfc5f2c8a7a33cce19f3d8fc","fullName":"tests.web.login_page_test#test_login_invalid","name":"test_login_invalid[email_missing_domain]","status":"failed","testResultsByEnv":{"default":"a264eafcbc1478333afdbd397f80d1a3"}}
