@@ -1,1 +1,1 @@
-{"id":"5dbe64e41855fb420841086978d3732f","fullName":"tests.api.test_misc.TestMiscEndpoints#test_jira_issues_list","name":"test_jira_issues_list","status":"broken","testResultsByEnv":{"default":"ea38c6e5f5cee16f7d16aa8d1c7beac1"}}
+{"id":"5dbe64e41855fb420841086978d3732f","fullName":"tests.api.test_misc.TestMiscEndpoints#test_jira_issues_list","name":"test_jira_issues_list","status":"passed","testResultsByEnv":{"default":"1c3393fb94dc5fb2bd25f5b1ee8b38a9"}}
