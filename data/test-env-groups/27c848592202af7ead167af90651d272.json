@@ -1,1 +1,1 @@
-{"id":"27c848592202af7ead167af90651d272","fullName":"tests.api.projects_test.TestProjects#test_project_has_required_attributes","name":"test_project_has_required_attributes","status":"passed","testResultsByEnv":{"default":"6435bed7d0d5516d1e5ddabd7c2af0c6"}}
+{"id":"27c848592202af7ead167af90651d272","fullName":"tests.api.projects_test.TestProjects#test_project_has_required_attributes","name":"test_project_has_required_attributes","status":"broken","testResultsByEnv":{"default":"5ef18db64bb04469dd42bb762e48892e"}}
