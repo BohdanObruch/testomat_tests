@@ -1,1 +1,1 @@
-{"id":"957067a063e95787ee602ef01fa18431","fullName":"tests.api.projects_test.TestProjectTests#test_update_project_test","name":"test_update_project_test","status":"passed","testResultsByEnv":{"default":"221c2fbd613950fc46afd9e9483cb394"}}
+{"id":"957067a063e95787ee602ef01fa18431","fullName":"tests.api.projects_test.TestProjectTests#test_update_project_test","name":"test_update_project_test","status":"broken","testResultsByEnv":{"default":"1448952e4dba14254c2a8a5ee07c725b"}}

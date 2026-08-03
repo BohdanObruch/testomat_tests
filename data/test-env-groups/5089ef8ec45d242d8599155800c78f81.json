@@ -1,1 +1,1 @@
-{"id":"5089ef8ec45d242d8599155800c78f81","fullName":"tests.api.test_analytics.TestAnalytics#test_runenvs_and_detail","name":"test_runenvs_and_detail","status":"passed","testResultsByEnv":{"default":"5dcec7b3107036b71b5108a7ca25b1a4"}}
+{"id":"5089ef8ec45d242d8599155800c78f81","fullName":"tests.api.test_analytics.TestAnalytics#test_runenvs_and_detail","name":"test_runenvs_and_detail","status":"broken","testResultsByEnv":{"default":"598fac5734034755afa549862705777c"}}
