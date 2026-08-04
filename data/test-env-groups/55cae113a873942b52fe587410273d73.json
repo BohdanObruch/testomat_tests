@@ -1,1 +1,1 @@
-{"id":"55cae113a873942b52fe587410273d73","fullName":"tests.api.test_misc.TestMiscEndpoints#test_comments_list","name":"test_comments_list","status":"broken","testResultsByEnv":{"default":"f1fe9453a7992d9da5f13a3267ad3f15"}}
+{"id":"55cae113a873942b52fe587410273d73","fullName":"tests.api.test_misc.TestMiscEndpoints#test_comments_list","name":"test_comments_list","status":"passed","testResultsByEnv":{"default":"f205727fb7b5b51cd222cb9286cbe71e"}}

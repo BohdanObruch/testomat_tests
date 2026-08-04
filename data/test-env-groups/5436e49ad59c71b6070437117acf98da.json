@@ -1,1 +1,1 @@
-{"id":"5436e49ad59c71b6070437117acf98da","fullName":"tests.api.test_plans.TestPlans#test_plan_aux","name":"test_plan_aux","status":"broken","testResultsByEnv":{"default":"e5e2e04f844c6affff34edfb824e32a5"}}
+{"id":"5436e49ad59c71b6070437117acf98da","fullName":"tests.api.test_plans.TestPlans#test_plan_aux","name":"test_plan_aux","status":"passed","testResultsByEnv":{"default":"062afdfc8012c8de85b71ae948acd190"}}

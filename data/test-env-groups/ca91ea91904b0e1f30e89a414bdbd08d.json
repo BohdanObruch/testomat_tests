@@ -1,1 +1,1 @@
-{"id":"ca91ea91904b0e1f30e89a414bdbd08d","fullName":"tests.api.test_runs.TestRunGroups#test_create_update_delete_rungroup","name":"test_create_update_delete_rungroup","status":"broken","testResultsByEnv":{"default":"787d356369d2aab5e2c67b80bdb1c65c"}}
+{"id":"ca91ea91904b0e1f30e89a414bdbd08d","fullName":"tests.api.test_runs.TestRunGroups#test_create_update_delete_rungroup","name":"test_create_update_delete_rungroup","status":"passed","testResultsByEnv":{"default":"2f39080912e9d8e15727839ebb429ac5"}}

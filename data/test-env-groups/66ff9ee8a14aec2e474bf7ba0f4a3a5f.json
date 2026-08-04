@@ -1,1 +1,1 @@
-{"id":"66ff9ee8a14aec2e474bf7ba0f4a3a5f","fullName":"tests.api.test_runs.TestRuns#test_create_update_delete_run","name":"test_create_update_delete_run","status":"broken","testResultsByEnv":{"default":"e8eff46dee5ab076f11d6fd60e8f4d17"}}
+{"id":"66ff9ee8a14aec2e474bf7ba0f4a3a5f","fullName":"tests.api.test_runs.TestRuns#test_create_update_delete_run","name":"test_create_update_delete_run","status":"passed","testResultsByEnv":{"default":"7fd16dc5c5e4d0eafc9b4fbbcfb70ba5"}}
