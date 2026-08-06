@@ -1,1 +1,1 @@
-{"id":"159b6e38d3074585fa438defdefa86b3","fullName":"tests.api.test_runs.TestRunGroups#test_rungroup_aux","name":"test_rungroup_aux","status":"passed","testResultsByEnv":{"default":"bf7bc3a70edc8e6ede94036533d7a2f4"}}
+{"id":"159b6e38d3074585fa438defdefa86b3","fullName":"tests.api.test_runs.TestRunGroups#test_rungroup_aux","name":"test_rungroup_aux","status":"broken","testResultsByEnv":{"default":"a8ca7636ca597622c2fe8d1c46fb2636"}}

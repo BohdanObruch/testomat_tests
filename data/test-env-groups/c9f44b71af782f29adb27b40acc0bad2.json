@@ -1,1 +1,1 @@
-{"id":"c9f44b71af782f29adb27b40acc0bad2","fullName":"tests.api.test_suites.TestSuites#test_update_suite","name":"test_update_suite","status":"passed","testResultsByEnv":{"default":"8be80fed4078d7c1989f70a1daead7e6"}}
+{"id":"c9f44b71af782f29adb27b40acc0bad2","fullName":"tests.api.test_suites.TestSuites#test_update_suite","name":"test_update_suite","status":"broken","testResultsByEnv":{"default":"1fa3b140795c934df53da4f1721db7da"}}
