@@ -1,0 +1,6 @@
+2026-08-12 09:22:09,337 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-08-12 09:22:12,891 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-08-12 09:22:12,898 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates/kind/test params=None
+2026-08-12 09:22:13,042 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates/kind/test -> 200
+2026-08-12 09:22:13,043 | TemplateApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/templates/refresh params=None
+2026-08-12 09:22:13,195 | TemplateApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/templates/refresh -> 403

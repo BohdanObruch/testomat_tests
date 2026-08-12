@@ -1,4 +1,0 @@
-2026-08-11 09:12:07,026 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
-2026-08-11 09:12:11,636 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
-2026-08-11 09:12:11,640 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites params=None
-2026-08-11 09:12:11,869 | SuiteApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/suites -> 403
