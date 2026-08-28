@@ -1,0 +1,4 @@
+2026-08-28 20:11:20,057 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-08-28 20:11:23,575 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-08-28 20:11:23,580 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups params=None
+2026-08-28 20:11:23,811 | RunGroupApi | DEBUG | POST https://app.testomat.io/api/a-farewell-to-arms/rungroups -> 403
