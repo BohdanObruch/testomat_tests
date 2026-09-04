@@ -1,1 +1,1 @@
-{"id":"7c2c1838f680abdff2b269b4c424edfb","fullName":"tests.web.selenium.enterprise_plan.switch_company_test#test_projects_page_header","name":"test_projects_page_header","status":"broken","testResultsByEnv":{"default":"22adf1b58ca798be2108344e1c4698a2"}}
+{"id":"7c2c1838f680abdff2b269b4c424edfb","fullName":"tests.web.selenium.enterprise_plan.switch_company_test#test_projects_page_header","name":"test_projects_page_header","status":"failed","testResultsByEnv":{"default":"2b085e62a36970b6dc8a1d94706c9414"}}
