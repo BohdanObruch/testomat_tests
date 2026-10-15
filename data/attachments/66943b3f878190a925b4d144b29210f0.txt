@@ -1,0 +1,4 @@
+2026-10-15 13:21:31,056 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects params=None
+2026-10-15 13:21:31,460 | ProjectApi | DEBUG | GET https://app.testomat.io/api/projects -> 200
+2026-10-15 13:21:31,462 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates params={'kind': None}
+2026-10-15 13:21:31,721 | TemplateApi | DEBUG | GET https://app.testomat.io/api/a-farewell-to-arms/templates -> 200
