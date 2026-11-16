@@ -1,1 +1,0 @@
-INFO     httpx:_client.py:1025 HTTP Request: POST https://app.testomat.io/api/login "HTTP/1.1 200 OK"
